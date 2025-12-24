@@ -1,0 +1,44 @@
+Tipo de item;Responsável;Relator;Componentes;Prioridade;Status;Criado;Atualizado(a);Servidores / Cluster
+Support;jose formiga;jose formiga;Database;Medium;Fechada;27/11/2025 14:27;01/12/2025 10:14;DataBase
+Tarefa;Marcos Aurelio Goncalves da Silva;Marcos Aurelio Goncalves da Silva;Middleware;Medium;Fechada;27/11/2025 11:50;04/12/2025 09:18;Cluster-PortalPSRM
+Tarefa;Marcos Aurelio Goncalves da Silva;Marcos Aurelio Goncalves da Silva;Middleware;Medium;Fechada;27/11/2025 11:47;04/12/2025 09:18;Cluster-Portal
+Tarefa;Marcos Aurelio Goncalves da Silva;Marcos Aurelio Goncalves da Silva;Middleware;Medium;Fechada;27/11/2025 11:46;04/12/2025 09:17;Cluster-Portal
+Support;Souleimar Dias;Souleimar Dias;Middleware;Medium;Fechada;27/11/2025 08:20;01/12/2025 10:14;Batch Server
+Support;Souleimar Dias;Souleimar Dias;Middleware;Medium;Fechada;27/11/2025 06:56;01/12/2025 10:13;Batch Server
+Tarefa;Andre Freitas;Andre Freitas;Middleware;Crítica;Fechada;26/11/2025 16:51;18/12/2025 11:20;Cluster-PSRM
+Tarefa;Mavila Kadimpasi;Mavila Kadimpasi;Infraestruturas;Medium;Fechada;26/11/2025 09:29;01/12/2025 11:47;Jira Server
+Support;Souleimar Dias;Souleimar Dias;Middleware;Medium;Fechada;26/11/2025 08:29;01/12/2025 10:13;Batch Server
+Support;Souleimar Dias;Souleimar Dias;Middleware;Medium;Fechada;26/11/2025 08:22;01/12/2025 10:13;PSRM
+Support;Souleimar Dias;Souleimar Dias;Middleware;Medium;Fechada;26/11/2025 08:16;01/12/2025 10:12;Batch Server
+Support;Souleimar Dias;Souleimar Dias;Middleware;Medium;Fechada;20/11/2025 08:11;01/12/2025 10:12;Batch Server
+Tarefa;Andre Freitas;Andre Freitas;Middleware;Medium;Fechada;18/11/2025 17:29;18/12/2025 11:20;Cluster-Portal
+Tarefa;Andre Freitas;Andre Freitas;Middleware;Medium;Fechada;18/11/2025 17:25;18/12/2025 11:21;Cluster-PortalPSRM
+Support;Abraão Pedro Castelo;Abraão Pedro Castelo;Middleware;Low;Fechada;17/11/2025 14:56;01/12/2025 10:12;PSRM
+Support;Souleimar Dias;Souleimar Dias;Middleware;Medium;Fechada;17/11/2025 10:43;01/12/2025 10:11;SIGT1
+Support;Souleimar Dias;Souleimar Dias;Middleware;Medium;Fechada;17/11/2025 10:39;01/12/2025 10:11;PSRM
+Support;Souleimar Dias;Souleimar Dias;Middleware;Medium;Fechada;15/11/2025 08:14;01/12/2025 10:11;Batch Server
+Tarefa;Luciano Rocha;Maura Fernandes;Database;Medium;Fechada;13/11/2025 17:39;19/11/2025 14:51;DataBase
+Tarefa;Marcos Aurelio Goncalves da Silva;Marcos Aurelio Goncalves da Silva;Middleware;Medium;Fechada;13/11/2025 13:45;17/12/2025 15:32;ServerMiddle
+Tarefa;Marcos Aurelio Goncalves da Silva;Marcos Aurelio Goncalves da Silva;Middleware;Medium;Fechada;13/11/2025 13:40;04/12/2025 09:17;Cluster-PSRM
+Support;Abraão Pedro Castelo;Abraão Pedro Castelo;Middleware;Medium;Fechada;12/11/2025 16:06;01/12/2025 10:11;PSRM
+Support;Abraão Pedro Castelo;Abraão Pedro Castelo;Middleware;Medium;Fechada;12/11/2025 14:33;01/12/2025 10:10;Batch Server
+Support;Abraão Pedro Castelo;Abraão Pedro Castelo;Middleware;High;Fechada;12/11/2025 13:56;01/12/2025 10:09;PSRM-PORTAL
+Support;Abraão Pedro Castelo;Abraão Pedro Castelo;Middleware;High;Fechada;12/11/2025 13:54;01/12/2025 10:08;PSRM-PORTAL
+Support;Souleimar Dias;Souleimar Dias;Middleware;Medium;Fechada;12/11/2025 10:47;01/12/2025 10:08;Portal
+Support;Adelmo Silva;Adelmo Silva;Middleware;Low;Fechada;12/11/2025 08:18;12/11/2025 08:37;Portal Admin
+Support;Souleimar Dias;Souleimar Dias;Middleware;Medium;Fechada;12/11/2025 08:16;01/12/2025 10:07;Batch Server
+Support;Souleimar Dias;Souleimar Dias;Middleware;Medium;Fechada;07/11/2025 08:35;01/12/2025 10:06;Batch Server
+Support;Abraão Pedro Castelo;Abraão Pedro Castelo;Middleware;Medium;Fechada;06/11/2025 15:10;01/12/2025 10:06;Portal
+Support;Souleimar Dias;Souleimar Dias;Middleware;Medium;Fechada;06/11/2025 15:08;01/12/2025 10:07;Portal
+Support;Abraão Pedro Castelo;Abraão Pedro Castelo;Middleware;Medium;Fechada;06/11/2025 13:39;01/12/2025 10:03;UCM
+Support;Souleimar Dias;Souleimar Dias;Middleware;Medium;Fechada;06/11/2025 08:49;12/11/2025 08:34;Batch Server
+Support;Souleimar Dias;Souleimar Dias;Middleware;Medium;Fechada;04/11/2025 15:36;12/11/2025 08:46;Batch Server
+Support;Souleimar Dias;Souleimar Dias;Middleware;Medium;Cancelado;04/11/2025 15:34;12/11/2025 10:00;Batch Server
+Support;Souleimar Dias;Souleimar Dias;Middleware;Crítica;Fechada;04/11/2025 13:53;12/11/2025 08:31;Batch Server
+Support;Souleimar Dias;Souleimar Dias;Middleware;Crítica;Fechada;04/11/2025 09:47;12/11/2025 08:31;Batch Server
+Support;Souleimar Dias;Souleimar Dias;Middleware;Highest;Fechada;04/11/2025 09:34;12/11/2025 08:32;Batch Server
+Support;Naga;Adelmo Silva;Middleware;Medium;Fechada;03/11/2025 09:48;12/11/2025 08:32;Portal Admin
+Support;Souleimar Dias;Souleimar Dias;Middleware;Highest;Fechada;01/11/2025 08:13;03/11/2025 09:41;Batch Server
+Support;Souleimar Dias;Souleimar Dias;Middleware;Highest;Fechada;01/11/2025 07:51;03/11/2025 09:41;Batch Server
+Support;Souleimar Dias;Souleimar Dias;Middleware;Medium;Fechada;01/11/2025 07:49;03/11/2025 09:41;Batch Server
+Support;Souleimar Dias;Souleimar Dias;Middleware;Medium;Fechada;01/11/2025 07:49;03/11/2025 09:40;Batch Server

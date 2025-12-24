@@ -2,14 +2,20 @@
 pandas==2.1.3
 numpy==1.24.3
 
+# Visualização e gráficos
+matplotlib==3.8.2
+
 # Geração de relatórios
 openpyxl==3.1.2
 reportlab==4.0.7
 python-docx==0.8.11
 
-# Web Framework (opcional)
+# Web Framework - API REST
 fastapi==0.104.1
 uvicorn==0.24.0
+
+# Dashboard web
+streamlit==1.28.1
 
 # Testes
 pytest==7.4.3
@@ -25,3 +31,4 @@ python-logging-loki==0.3.2
 
 # Variáveis de ambiente
 python-dotenv==1.0.0
+
