@@ -172,6 +172,13 @@ async def upload_comparativo(
         analises_prioridade = AnalysisService.analisar_por_prioridade(tickets_atu)
         analises_servidor = AnalysisService.analisar_por_servidor(tickets_atu)
         
+        # Top 10 servidores com tickets abertos
+        top_10_servidores_atual = AnalysisService.top_10_servidores_abertos(tickets_atu)
+        top_10_servidores_acumulado = AnalysisService.top_10_servidores_abertos(tickets_ant + tickets_atu)
+        
+        # Resumo acumulado
+        resumo_acumulado = AnalysisService.calcular_resumo_acumulado(tickets_ant, tickets_atu)
+        
         # Gerar comparativo
         comparativo = {
             'periodo_anterior': arquivo_anterior.filename.split("_")[1] if "_" in arquivo_anterior.filename else "Anterior",
@@ -187,7 +194,10 @@ async def upload_comparativo(
             'variacao_fechados': resumo_atu['total_fechados'] - resumo_ant['total_fechados'],
             'backlog_anterior': resumo_ant['backlog_final'],
             'backlog_atual': resumo_atu['backlog_final'],
-            'variacao_backlog': resumo_atu['backlog_final'] - resumo_ant['backlog_final']
+            'variacao_backlog': resumo_atu['backlog_final'] - resumo_ant['backlog_final'],
+            'top_10_servidores_atual': top_10_servidores_atual,
+            'top_10_servidores_acumulado': top_10_servidores_acumulado,
+            'resumo_acumulado': resumo_acumulado
         }
         
         # Gerar PDF
@@ -203,7 +213,11 @@ async def upload_comparativo(
             analises_origem=analises_origem,
             analises_prioridade=analises_prioridade,
             analises_servidor=analises_servidor,
-            comparativo=comparativo
+            comparativo=comparativo,
+            resumo_anterior=resumo_ant,
+            resumo_acumulado=resumo_acumulado,
+            top_10_servidores_atual=top_10_servidores_atual,
+            top_10_servidores_acumulado=top_10_servidores_acumulado
         )
         
         # Limpar temporários

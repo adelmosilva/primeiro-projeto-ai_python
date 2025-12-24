@@ -273,6 +273,11 @@ elif opcao == "📊 Comparativo de Períodos":
                 analises_origem = AnalysisService.analisar_por_origem(tickets_atu)
                 analises_prioridade = AnalysisService.analisar_por_prioridade(tickets_atu)
                 analises_servidor = AnalysisService.analisar_por_servidor(tickets_atu)
+                
+                # Análises para Top 10 e Acumulado
+                top_10_servidores_atual = AnalysisService.top_10_servidores_abertos(tickets_atu)
+                top_10_servidores_acumulado = AnalysisService.top_10_servidores_abertos(tickets_ant + tickets_atu)
+                resumo_acumulado = AnalysisService.calcular_resumo_acumulado(tickets_ant, tickets_atu)
                 tmp_atu_path.unlink()
             
             # Comparativo
@@ -325,7 +330,64 @@ elif opcao == "📊 Comparativo de Períodos":
             
             st.markdown("---")
             
-            # Gerar PDF Comparativo
+            # Resumo Acumulado
+            if resumo_acumulado:
+                st.subheader("📈 Resumo Acumulado (Ambos os Períodos)")
+                
+                col1, col2, col3, col4 = st.columns(4)
+                
+                with col1:
+                    st.metric("Total Acumulado", resumo_acumulado.get('total_geral', 0))
+                
+                with col2:
+                    st.metric("Abertos Acumulado", resumo_acumulado.get('total_abertos', 0))
+                
+                with col3:
+                    st.metric("Fechados Acumulado", resumo_acumulado.get('total_fechados', 0))
+                
+                with col4:
+                    backlog_acumulado = (resumo_acumulado.get('total_geral', 0) - 
+                                       resumo_acumulado.get('total_fechados', 0))
+                    st.metric("Backlog Acumulado", backlog_acumulado)
+                
+                st.markdown("---")
+            
+            # Top 10 Servidores
+            if top_10_servidores_atual or top_10_servidores_acumulado:
+                st.subheader("🏢 Top 10 Servidores/Clusters com Mais Tickets Abertos")
+                
+                col1, col2 = st.columns(2)
+                
+                with col1:
+                    if top_10_servidores_atual:
+                        st.write("**Período Atual**")
+                        df_top10_atual = pd.DataFrame(
+                            top_10_servidores_atual,
+                            columns=["Servidor/Cluster", "Tickets Abertos"]
+                        )
+                        st.bar_chart(
+                            data=df_top10_atual.set_index("Servidor/Cluster"),
+                            use_container_width=True,
+                            height=400
+                        )
+                        st.dataframe(df_top10_atual, use_container_width=True, hide_index=True)
+                
+                with col2:
+                    if top_10_servidores_acumulado:
+                        st.write("**Acumulado (Ambos os Períodos)**")
+                        df_top10_acumulado = pd.DataFrame(
+                            top_10_servidores_acumulado,
+                            columns=["Servidor/Cluster", "Tickets Abertos"]
+                        )
+                        st.bar_chart(
+                            data=df_top10_acumulado.set_index("Servidor/Cluster"),
+                            use_container_width=True,
+                            height=400
+                        )
+                        st.dataframe(df_top10_acumulado, use_container_width=True, hide_index=True)
+                
+                st.markdown("---")
+            
             st.subheader("📄 Gerar Relatório Comparativo")
             
             if st.button("Gerar PDF Comparativo com Gráficos", use_container_width=True, type="primary"):
@@ -361,7 +423,11 @@ elif opcao == "📊 Comparativo de Períodos":
                         analises_origem=analises_origem,
                         analises_prioridade=analises_prioridade,
                         analises_servidor=analises_servidor,
-                        comparativo=comparativo
+                        comparativo=comparativo,
+                        resumo_anterior=resumo_ant,
+                        resumo_acumulado=resumo_acumulado,
+                        top_10_servidores_atual=top_10_servidores_atual,
+                        top_10_servidores_acumulado=top_10_servidores_acumulado
                     )
                     
                     with open(pdf_path, "rb") as pdf_file:

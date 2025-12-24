@@ -3,7 +3,7 @@ Serviço de geração de relatórios em PDF
 """
 
 import logging
-from typing import Dict, Any
+from typing import Dict, Any, List
 from datetime import datetime
 from pathlib import Path
 from reportlab.lib.pagesizes import A4, landscape
@@ -194,7 +194,11 @@ class PDFReportService:
         analises_origem: Dict[str, Dict[str, int]],
         analises_prioridade: Dict[str, Dict[str, int]] = None,
         analises_servidor: Dict[str, Dict[str, int]] = None,
-        comparativo: Dict[str, Any] = None
+        comparativo: Dict[str, Any] = None,
+        resumo_anterior: Dict[str, Any] = None,
+        resumo_acumulado: Dict[str, Any] = None,
+        top_10_servidores_atual: List[tuple] = None,
+        top_10_servidores_acumulado: List[tuple] = None
     ) -> Path:
         """
         Gera relatório em PDF
@@ -451,6 +455,83 @@ class PDFReportService:
                 ('FONTSIZE', (0, 1), (-1, -1), 9),
             ]))
             story.append(comp_comp_table)
+            
+            # Resumo Acumulado se fornecido
+            if resumo_acumulado:
+                story.append(Spacer(1, 0.5*cm))
+                story.append(Paragraph("8. RESUMO ACUMULADO", secao))
+                story.append(Spacer(1, 0.3*cm))
+                
+                acum_data = [
+                    ['Métrica', 'Acumulado'],
+                    ['Total de Tickets', str(resumo_acumulado.get('total_geral', 0))],
+                    ['Abertos', str(resumo_acumulado.get('total_abertos', 0))],
+                    ['Fechados', str(resumo_acumulado.get('total_fechados', 0))]
+                ]
+                
+                acum_table = Table(acum_data, colWidths=[8*cm, 6*cm])
+                acum_table.setStyle(TableStyle([
+                    ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2e5c8a')),
+                    ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                    ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                    ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                    ('FONTSIZE', (0, 0), (-1, 0), 10),
+                    ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
+                    ('BACKGROUND', (0, 1), (-1, -1), colors.lightblue),
+                    ('GRID', (0, 0), (-1, -1), 1, colors.black),
+                    ('FONTSIZE', (0, 1), (-1, -1), 9),
+                ]))
+                story.append(acum_table)
+            
+            # Top 10 Servidores com Mais Tickets Abertos - Período Atual
+            if top_10_servidores_atual:
+                story.append(Spacer(1, 0.5*cm))
+                story.append(Paragraph("9. TOP 10 SERVIDORES/CLUSTERS - PERÍODO ATUAL", secao))
+                story.append(Spacer(1, 0.3*cm))
+                
+                top10_data = [['Servidor/Cluster', 'Tickets Abertos']]
+                for servidor, count in top_10_servidores_atual:
+                    top10_data.append([str(servidor)[:30], str(count)])
+                
+                top10_table = Table(top10_data, colWidths=[12*cm, 4*cm])
+                top10_table.setStyle(TableStyle([
+                    ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#1f4788')),
+                    ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                    ('ALIGN', (1, 0), (1, -1), 'CENTER'),
+                    ('ALIGN', (0, 0), (0, 0), 'CENTER'),
+                    ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                    ('FONTSIZE', (0, 0), (-1, 0), 10),
+                    ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
+                    ('BACKGROUND', (0, 1), (-1, -1), colors.lightgreen),
+                    ('GRID', (0, 0), (-1, -1), 1, colors.black),
+                    ('FONTSIZE', (0, 1), (-1, -1), 9),
+                ]))
+                story.append(top10_table)
+            
+            # Top 10 Servidores com Mais Tickets Abertos - Acumulado
+            if top_10_servidores_acumulado:
+                story.append(Spacer(1, 0.5*cm))
+                story.append(Paragraph("10. TOP 10 SERVIDORES/CLUSTERS - ACUMULADO", secao))
+                story.append(Spacer(1, 0.3*cm))
+                
+                top10_acum_data = [['Servidor/Cluster', 'Tickets Abertos']]
+                for servidor, count in top_10_servidores_acumulado:
+                    top10_acum_data.append([str(servidor)[:30], str(count)])
+                
+                top10_acum_table = Table(top10_acum_data, colWidths=[12*cm, 4*cm])
+                top10_acum_table.setStyle(TableStyle([
+                    ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2e5c8a')),
+                    ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                    ('ALIGN', (1, 0), (1, -1), 'CENTER'),
+                    ('ALIGN', (0, 0), (0, 0), 'CENTER'),
+                    ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                    ('FONTSIZE', (0, 0), (-1, 0), 10),
+                    ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
+                    ('BACKGROUND', (0, 1), (-1, -1), colors.lightcyan),
+                    ('GRID', (0, 0), (-1, -1), 1, colors.black),
+                    ('FONTSIZE', (0, 1), (-1, -1), 9),
+                ]))
+                story.append(top10_acum_table)
         
         # Build PDF
         doc.build(story)

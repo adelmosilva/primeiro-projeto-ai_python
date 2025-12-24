@@ -136,3 +136,49 @@ class AnalysisService:
             }
         
         return resultado
+    
+    @staticmethod
+    def top_10_servidores_abertos(tickets: List[Ticket]) -> List[tuple]:
+        """
+        Retorna top 10 servidores com mais tickets ABERTOS
+        
+        Args:
+            tickets: Lista de Tickets
+            
+        Returns:
+            Lista de tuplas (servidor, count) ordenada decrescente
+        """
+        abertos = [t for t in tickets if t.esta_aberto]
+        servidor_count = {}
+        
+        for ticket in abertos:
+            serv = ticket.servidor or "Não especificado"
+            servidor_count[serv] = servidor_count.get(serv, 0) + 1
+        
+        # Ordenar e retornar top 10
+        top_10 = sorted(servidor_count.items(), key=lambda x: x[1], reverse=True)[:10]
+        return top_10
+    
+    @staticmethod
+    def calcular_resumo_acumulado(tickets_periodo1: List[Ticket], tickets_periodo2: List[Ticket]) -> Dict[str, Any]:
+        """
+        Calcula resumo acumulado entre dois períodos
+        
+        Args:
+            tickets_periodo1: Tickets do período anterior
+            tickets_periodo2: Tickets do período atual
+            
+        Returns:
+            Dicionário com métricas acumuladas
+        """
+        # Combinar tickets de ambos períodos
+        todos_tickets = tickets_periodo1 + tickets_periodo2
+        
+        abertos = sum(1 for t in todos_tickets if t.esta_aberto)
+        fechados = sum(1 for t in todos_tickets if not t.esta_aberto)
+        
+        return {
+            'total_abertos': abertos,
+            'total_fechados': fechados,
+            'total_geral': len(todos_tickets)
+        }
