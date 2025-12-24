@@ -13,22 +13,10 @@ python-docx>=0.8.0
 # Web Framework - API REST
 fastapi>=0.100.0
 uvicorn>=0.20.0
+python-multipart>=0.0.6
 
 # Dashboard web
 streamlit>=1.28.0
 
-# Testes
-pytest==7.4.3
-pytest-cov==4.1.0
-
-# Qualidade de código
-black==23.12.0
-flake8==6.1.0
-pylint==3.0.3
-
-# Logging e monitoramento
-python-logging-loki==0.3.2
-
 # Variáveis de ambiente
-python-dotenv==1.0.0
-
+python-dotenv>=1.0.0
