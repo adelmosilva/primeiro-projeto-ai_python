@@ -18,7 +18,7 @@ from app.utils.jira_parser import parser_jira_csv
 from app.services.ticket_service import TicketService
 from app.services.analysis_service import AnalysisService
 from app.services.pdf_report_service import PDFReportService
-from app.config import REPORTS_OUTPUT_DIR
+from app.config import REPORTS_OUTPUT_DIR, UPLOADS_DIR
 
 # Configurar página
 st.set_page_config(
@@ -59,13 +59,20 @@ if opcao == "📈 Análise de Período":
     if uploaded_file is not None:
         try:
             with st.spinner("Processando arquivo..."):
-                # Salvar temporariamente
-                with tempfile.NamedTemporaryFile(delete=False, suffix=".csv") as tmp:
-                    shutil.copyfileobj(uploaded_file, tmp)
-                    tmp_path = Path(tmp.name)
+                # Criar diretório se não existir
+                UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
+                
+                # Salvar arquivo no diretório UPLOADS
+                csv_filename = f"upload_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{uploaded_file.name}"
+                csv_path = UPLOADS_DIR / csv_filename
+                
+                with open(csv_path, "wb") as f:
+                    f.write(uploaded_file.getbuffer())
+                
+                st.info(f"✅ Arquivo salvo em: `uploads/{csv_filename}`")
                 
                 # Processar
-                tickets = parser_jira_csv(tmp_path)
+                tickets = parser_jira_csv(csv_path)
                 
                 service = TicketService()
                 service.carregar_tickets(tickets)
@@ -76,9 +83,6 @@ if opcao == "📈 Análise de Período":
                 analises_origem = AnalysisService.analisar_por_origem(tickets)
                 analises_prioridade = AnalysisService.analisar_por_prioridade(tickets)
                 analises_servidor = AnalysisService.analisar_por_servidor(tickets)
-                
-                # Limpar temporário
-                tmp_path.unlink()
             
             # Resumo Executivo
             st.subheader("📋 Resumo Executivo")
@@ -240,23 +244,29 @@ elif opcao == "📊 Comparativo de Períodos":
     if arquivo_anterior is not None and arquivo_atual is not None:
         try:
             with st.spinner("Processando arquivos..."):
-                # Processar anterior
-                with tempfile.NamedTemporaryFile(delete=False, suffix=".csv") as tmp_ant:
-                    shutil.copyfileobj(arquivo_anterior, tmp_ant)
-                    tmp_ant_path = Path(tmp_ant.name)
+                # Criar diretório se não existir
+                UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
                 
-                tickets_ant = parser_jira_csv(tmp_ant_path)
+                # Salvar arquivo anterior
+                csv_ant_filename = f"upload_anterior_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{arquivo_anterior.name}"
+                csv_ant_path = UPLOADS_DIR / csv_ant_filename
+                with open(csv_ant_path, "wb") as f:
+                    f.write(arquivo_anterior.getbuffer())
+                
+                # Processar anterior
+                tickets_ant = parser_jira_csv(csv_ant_path)
                 service_ant = TicketService()
                 service_ant.carregar_tickets(tickets_ant)
                 resumo_ant = AnalysisService.calcular_resumo_executivo(tickets_ant)
-                tmp_ant_path.unlink()
+                
+                # Salvar arquivo atual
+                csv_atu_filename = f"upload_atual_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{arquivo_atual.name}"
+                csv_atu_path = UPLOADS_DIR / csv_atu_filename
+                with open(csv_atu_path, "wb") as f:
+                    f.write(arquivo_atual.getbuffer())
                 
                 # Processar atual
-                with tempfile.NamedTemporaryFile(delete=False, suffix=".csv") as tmp_atu:
-                    shutil.copyfileobj(arquivo_atual, tmp_atu)
-                    tmp_atu_path = Path(tmp_atu.name)
-                
-                tickets_atu = parser_jira_csv(tmp_atu_path)
+                tickets_atu = parser_jira_csv(csv_atu_path)
                 service_atu = TicketService()
                 service_atu.carregar_tickets(tickets_atu)
                 resumo_atu = AnalysisService.calcular_resumo_executivo(tickets_atu)

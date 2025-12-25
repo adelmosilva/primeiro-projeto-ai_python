@@ -11,6 +11,7 @@ from datetime import datetime
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from backend.ssh_tunnel import SSHTunnelManager
+from backend.app.config import UPLOADS_DIR
 
 def clean_ticket_data(row):
     """Limpa e normaliza os dados de um ticket."""
@@ -64,8 +65,8 @@ def migrar_csvs():
         print(f"   Container ID: {container_id}")
         
         # Encontrar CSVs
-        csv_paths = list(Path("uploads").glob("*formatado.csv"))
-        print(f"\n3️⃣ Encontrados {len(csv_paths)} CSVs")
+        csv_paths = list(UPLOADS_DIR.glob("*formatado.csv"))
+        print(f"\n3️⃣ Encontrados {len(csv_paths)} CSVs em {UPLOADS_DIR}")
         
         total_inseridos = 0
         total_erros = 0
