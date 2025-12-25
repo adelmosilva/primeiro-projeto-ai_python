@@ -174,14 +174,14 @@ try:
         st.subheader("👤 Top 10 em Atendimento")
         responsaveis = servico.obter_top_responsaveis()
         if responsaveis:
-            df_responsaveis = pd.DataFrame(responsaveis[:10], columns=['responsavel', 'quantidade']).sort_values('quantidade')
+            df_responsaveis = pd.DataFrame(responsaveis[:10], columns=['responsavel', 'total']).sort_values('total')
             fig = px.bar(
                 df_responsaveis,
-                x='quantidade',
+                x='total',
                 y='responsavel',
                 orientation='h',
                 title="Responsáveis em Atendimento",
-                color='quantidade',
+                color='total',
                 color_continuous_scale="Blues"
             )
             fig.update_layout(height=400, xaxis_title="Quantidade", yaxis_title="Responsável")

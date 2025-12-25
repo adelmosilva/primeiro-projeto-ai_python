@@ -73,17 +73,17 @@ try:
         responsaveis = servico.obter_top_responsaveis()
         
         if responsaveis:
-            df_responsaveis = pd.DataFrame(responsaveis[:20], columns=['responsavel', 'quantidade']).sort_values('quantidade')
+            df_responsaveis = pd.DataFrame(responsaveis[:20], columns=['responsavel', 'total']).sort_values('total')
             
             fig = px.bar(
                 df_responsaveis,
-                x='quantidade',
+                x='total',
                 y='responsavel',
                 orientation='h',
                 title="Responsáveis em Atendimento",
-                color='quantidade',
+                color='total',
                 color_continuous_scale="Blues",
-                hover_data={'quantidade': True}
+                hover_data={'total': True}
             )
             fig.update_layout(
                 height=600,
@@ -95,7 +95,7 @@ try:
             # Tabela com números
             st.markdown("---")
             st.subheader("Dados Tabulares")
-            st.dataframe(pd.DataFrame(responsaveis[:20], columns=['Responsável', 'Quantidade']), use_container_width=True)
+            st.dataframe(pd.DataFrame(responsaveis[:20], columns=['Responsável', 'Total']), use_container_width=True)
         else:
             st.warning("Nenhum dado de responsáveis disponível")
     
