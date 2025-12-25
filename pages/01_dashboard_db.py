@@ -35,7 +35,7 @@ try:
     from datetime import datetime
     
     # Agora carregar o dashboard
-    exec(open(PROJECT_ROOT / "backend" / "dashboard_db.py").read())
+    exec(open(PROJECT_ROOT / "backend" / "dashboard_db.py", encoding='utf-8').read())
     
 except ImportError as e:
     st.error(f"❌ Erro ao importar módulo: {e}")

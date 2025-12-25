@@ -40,7 +40,7 @@ try:
     import json
     
     # Agora carregar o dashboard
-    exec(open(PROJECT_ROOT / "backend" / "dashboard.py").read())
+    exec(open(PROJECT_ROOT / "backend" / "dashboard.py", encoding='utf-8').read())
     
 except ImportError as e:
     st.error(f"❌ Erro ao importar módulo: {e}")
