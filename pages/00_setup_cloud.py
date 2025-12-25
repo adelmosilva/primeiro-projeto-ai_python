@@ -47,12 +47,22 @@ if 'migration_step' not in st.session_state:
 # ============= FUNÇÕES =============
 
 def test_supabase():
-    """Testa conexão ao Supabase (força IPv4)"""
+    """Testa conexão ao Supabase (força IPv4 com fallbacks)"""
     try:
         import socket
-        # Resolver hostname manualmente para forçar IPv4
-        addr_info = socket.getaddrinfo(SUPABASE_HOST, SUPABASE_PORT, socket.AF_INET)
-        ipv4_host = addr_info[0][4][0]
+        
+        # Tentar resolver com socket.getaddrinfo
+        try:
+            addr_info = socket.getaddrinfo(SUPABASE_HOST, SUPABASE_PORT, socket.AF_INET)
+            ipv4_host = addr_info[0][4][0]
+        except:
+            # Fallback: tentar DNS público
+            try:
+                addr_info = socket.getaddrinfo(SUPABASE_HOST, SUPABASE_PORT, socket.AF_INET, socket.SOCK_STREAM)
+                ipv4_host = addr_info[0][4][0]
+            except:
+                # Fallback 2: usar hostname direto (pode tentar IPv6)
+                ipv4_host = SUPABASE_HOST
         
         conn = psycopg2.connect(
             host=ipv4_host,
@@ -68,10 +78,14 @@ def test_supabase():
         return False, str(e)
 
 def create_tables():
-    """Cria tabelas no Supabase (força IPv4)"""
+    """Cria tabelas no Supabase (força IPv4 com fallbacks)"""
     import socket
-    addr_info = socket.getaddrinfo(SUPABASE_HOST, SUPABASE_PORT, socket.AF_INET)
-    ipv4_host = addr_info[0][4][0]
+    
+    try:
+        addr_info = socket.getaddrinfo(SUPABASE_HOST, SUPABASE_PORT, socket.AF_INET)
+        ipv4_host = addr_info[0][4][0]
+    except:
+        ipv4_host = SUPABASE_HOST
     
     conn = psycopg2.connect(
         host=ipv4_host,
@@ -185,10 +199,14 @@ def export_from_vps():
     return csv_data
 
 def import_to_supabase(csv_data):
-    """Importa dados para Supabase (força IPv4)"""
+    """Importa dados para Supabase (força IPv4 com fallbacks)"""
     import socket
-    addr_info = socket.getaddrinfo(SUPABASE_HOST, SUPABASE_PORT, socket.AF_INET)
-    ipv4_host = addr_info[0][4][0]
+    
+    try:
+        addr_info = socket.getaddrinfo(SUPABASE_HOST, SUPABASE_PORT, socket.AF_INET)
+        ipv4_host = addr_info[0][4][0]
+    except:
+        ipv4_host = SUPABASE_HOST
     
     df = pd.read_csv(StringIO(csv_data))
     
@@ -243,10 +261,14 @@ def import_to_supabase(csv_data):
     return inserted, errors
 
 def validate_migration():
-    """Valida se a migração funcionou (força IPv4)"""
+    """Valida se a migração funcionou (força IPv4 com fallbacks)"""
     import socket
-    addr_info = socket.getaddrinfo(SUPABASE_HOST, SUPABASE_PORT, socket.AF_INET)
-    ipv4_host = addr_info[0][4][0]
+    
+    try:
+        addr_info = socket.getaddrinfo(SUPABASE_HOST, SUPABASE_PORT, socket.AF_INET)
+        ipv4_host = addr_info[0][4][0]
+    except:
+        ipv4_host = SUPABASE_HOST
     
     conn = psycopg2.connect(
         host=ipv4_host,

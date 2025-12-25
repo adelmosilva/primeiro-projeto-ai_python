@@ -51,6 +51,7 @@ class SupabaseTicketService:
                 addr_info = socket.getaddrinfo(host, port, socket.AF_INET)
                 ipv4_host = addr_info[0][4][0]
             except:
+                # Fallback: usar hostname direto
                 ipv4_host = host
             
             self.connection = psycopg2.connect(
