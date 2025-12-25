@@ -61,7 +61,7 @@ try:
                 values='quantidade',
                 names='status',
                 title="Distribuição de Status",
-                color_discrete_sequence=px.colors.qualitative.Set2
+                color_discrete_sequence=px.colors.sequential.Blues
             )
             fig.update_layout(height=400)
             st.plotly_chart(fig, use_container_width=True)
@@ -80,7 +80,7 @@ try:
                 orientation='h',
                 title="Módulos mais acionados",
                 color='quantidade',
-                color_continuous_scale="Viridis",
+                color_continuous_scale="Blues",
                 hover_data={'quantidade': True}
             )
             fig.update_layout(
@@ -144,7 +144,7 @@ try:
                     y='quantidade',
                     title="Tickets por Status",
                     color='status',
-                    color_discrete_sequence=px.colors.qualitative.Set3
+                    color_discrete_sequence=px.colors.sequential.Blues
                 )
                 fig.update_layout(height=400)
                 st.plotly_chart(fig, use_container_width=True)
@@ -160,7 +160,7 @@ try:
                     y='quantidade',
                     title="Tickets por Origem",
                     color='origem',
-                    color_discrete_sequence=px.colors.qualitative.Bold
+                    color_discrete_sequence=px.colors.sequential.Blues_r
                 )
                 fig.update_layout(height=400)
                 st.plotly_chart(fig, use_container_width=True)

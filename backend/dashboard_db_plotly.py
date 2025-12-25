@@ -143,7 +143,7 @@ try:
                 values='quantidade', 
                 names='status',
                 title="Tickets por Status",
-                color_discrete_sequence=px.colors.qualitative.Set3
+                color_discrete_sequence=px.colors.sequential.Blues
             )
             fig.update_layout(height=400)
             st.plotly_chart(fig, use_container_width=True)
@@ -161,7 +161,7 @@ try:
                 y='quantidade',
                 title="Tickets por Origem",
                 color='origem',
-                color_discrete_sequence=px.colors.qualitative.Bold
+                color_discrete_sequence=px.colors.sequential.Blues_r
             )
             fig.update_layout(height=400, xaxis_title="Origem", yaxis_title="Quantidade")
             st.plotly_chart(fig, use_container_width=True)
@@ -180,7 +180,7 @@ try:
                 orientation='h',
                 title="Módulos com Mais Tickets",
                 color='quantidade',
-                color_continuous_scale="Viridis"
+                color_continuous_scale="Blues"
             )
             fig.update_layout(height=400, xaxis_title="Quantidade", yaxis_title="Módulo")
             st.plotly_chart(fig, use_container_width=True)
@@ -262,7 +262,7 @@ try:
                 y='Quantidade',
                 title="Comparativo de Períodos",
                 color='Período',
-                color_discrete_sequence=['#AB63FA', '#FFA15A']
+                color_discrete_sequence=['#0D47A1', '#42A5F5']
             )
             fig.update_layout(height=400, yaxis_title="Quantidade")
             st.plotly_chart(fig, use_container_width=True)
