@@ -360,6 +360,21 @@ elif opcao == "📊 Comparativo de Períodos":
                         top_10_servidores_atual,
                         columns=["Servidor/Cluster", "Tickets Abertos"]
                     )
+                    
+                    # Calcular soma dos demais servidores
+                    top10_sum = df_top10_atual["Tickets Abertos"].sum()
+                    total_servidores = analises_servidor.get(resumo_atu.get('total_abertos', 0), 0) if analises_servidor else 0
+                    
+                    # Calcular total de tickets abertos de forma mais confiável
+                    total_abertos_atual = resumo_atu['total_abertos']
+                    demais_sum = max(0, total_abertos_atual - top10_sum)
+                    
+                    # Adicionar linha "Demais servidores"
+                    df_demais = pd.DataFrame({
+                        "Servidor/Cluster": ["Demais Servidores"],
+                        "Tickets Abertos": [demais_sum]
+                    })
+                    df_top10_atual = pd.concat([df_top10_atual, df_demais], ignore_index=True)
                     df_top10_atual.index = df_top10_atual.index + 1
                     df_top10_atual.index.name = "Posição"
                     
@@ -367,7 +382,7 @@ elif opcao == "📊 Comparativo de Períodos":
                     st.dataframe(
                         df_top10_atual,
                         use_container_width=True,
-                        height=300
+                        height=350
                     )
                 else:
                     st.info("ℹ️ Nenhum servidor com tickets abertos no período atual")
@@ -381,6 +396,18 @@ elif opcao == "📊 Comparativo de Períodos":
                         top_10_servidores_acumulado,
                         columns=["Servidor/Cluster", "Tickets Abertos"]
                     )
+                    
+                    # Calcular soma dos demais servidores
+                    top10_sum_acum = df_top10_acumulado["Tickets Abertos"].sum()
+                    total_abertos_acum = resumo_acumulado['total_abertos']
+                    demais_sum_acum = max(0, total_abertos_acum - top10_sum_acum)
+                    
+                    # Adicionar linha "Demais servidores"
+                    df_demais_acum = pd.DataFrame({
+                        "Servidor/Cluster": ["Demais Servidores"],
+                        "Tickets Abertos": [demais_sum_acum]
+                    })
+                    df_top10_acumulado = pd.concat([df_top10_acumulado, df_demais_acum], ignore_index=True)
                     df_top10_acumulado.index = df_top10_acumulado.index + 1
                     df_top10_acumulado.index.name = "Posição"
                     
@@ -388,7 +415,7 @@ elif opcao == "📊 Comparativo de Períodos":
                     st.dataframe(
                         df_top10_acumulado,
                         use_container_width=True,
-                        height=300
+                        height=350
                     )
                 else:
                     st.info("ℹ️ Nenhum servidor com tickets abertos no acumulado")
