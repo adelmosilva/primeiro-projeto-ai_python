@@ -6,6 +6,9 @@ import os
 import sys
 from pathlib import Path
 
+# ⚠️ FORÇA APENAS IPv4 GLOBALMENTE
+os.environ['PSYCOPG2_DISABLE_IPV6'] = '1'
+
 # Detectar se está no Streamlit Cloud
 IS_CLOUD = 'STREAMLIT' in os.environ or 'streamlit.io' in os.getenv('HOSTNAME', '')
 

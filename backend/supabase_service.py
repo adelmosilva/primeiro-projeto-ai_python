@@ -2,6 +2,9 @@
 Serviço para conectar ao Supabase (PostgreSQL na nuvem)
 """
 
+# ⚠️ IMPORTAR PRIMEIRO - FORÇA IPv4 GLOBALMENTE
+from . import ipv4_socket_wrapper
+
 import os
 import pandas as pd
 import psycopg2
@@ -19,13 +22,17 @@ SUPABASE_DB = "postgres"
 SUPABASE_PORT = 5432
 
 def resolve_ipv4_only(hostname, port):
-    """Resolve hostname to IPv4 address only (disable IPv6)"""
+    """Resolve hostname to IPv4 address only (disable IPv6)
+    Retorna APENAS o endereço IPv4 resolvido"""
     try:
+        # AF_INET força apenas IPv4
         addr_info = socket.getaddrinfo(hostname, port, socket.AF_INET, socket.SOCK_STREAM)
         if addr_info:
-            return addr_info[0][4][0]
+            ipv4 = addr_info[0][4][0]
+            print(f"✅ Resolvido {hostname} → {ipv4}")
+            return ipv4
     except Exception as e:
-        print(f"⚠️ IPv4 resolution failed: {e}, falling back to hostname")
+        print(f"⚠️ IPv4 resolution failed for {hostname}: {e}")
     return hostname
 
 class SupabaseTicketService:

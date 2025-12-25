@@ -2,6 +2,9 @@
 AGT 4.0 - App Principal do Streamlit Cloud
 """
 
+# ⚠️ IMPORTAR PRIMEIRO - FORÇA IPv4 GLOBALMENTE
+from backend import ipv4_socket_wrapper
+
 import streamlit as st
 from pathlib import Path
 import sys

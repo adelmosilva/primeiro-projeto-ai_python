@@ -3,6 +3,9 @@ Página de Setup do Streamlit Cloud
 Deve ser acessada PRIMEIRO para migrar o banco de dados do VPS para Supabase
 """
 
+# ⚠️ IMPORTAR PRIMEIRO - FORÇA IPv4 GLOBALMENTE
+from backend import ipv4_socket_wrapper
+
 import streamlit as st
 import psycopg2
 import pandas as pd
@@ -12,6 +15,7 @@ from io import StringIO
 import time
 import socket
 import sys
+import os
 
 # Importar versão
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -22,13 +26,17 @@ st.set_page_config(page_title="⚙️ Setup Cloud", layout="wide", initial_sideb
 # ============= HELPER FUNCTIONS =============
 
 def resolve_ipv4_only(hostname, port):
-    """Resolve hostname to IPv4 address only (disable IPv6)"""
+    """Resolve hostname to IPv4 address only (disable IPv6)
+    Retorna APENAS o endereço IPv4 resolvido"""
     try:
+        # AF_INET força apenas IPv4
         addr_info = socket.getaddrinfo(hostname, port, socket.AF_INET, socket.SOCK_STREAM)
         if addr_info:
-            return addr_info[0][4][0]
+            ipv4 = addr_info[0][4][0]
+            print(f"✅ Resolvido {hostname} → {ipv4}")
+            return ipv4
     except Exception as e:
-        print(f"⚠️ IPv4 resolution failed: {e}, falling back to hostname")
+        print(f"⚠️ IPv4 resolution failed for {hostname}: {e}")
     return hostname
 
 st.title("⚙️ Setup Inicial - Supabase Migration")
