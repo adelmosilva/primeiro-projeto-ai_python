@@ -142,9 +142,8 @@ def aplicar_tema():
 
 def configurar_tema_completo():
     """
-    Configuração completa de tema com seletor no sidebar
+    Configuração completa de tema - apenas tema claro
     Deve ser chamado no início de cada página
     """
     inicializar_tema()
     aplicar_tema()
-    return seletor_tema_sidebar()
