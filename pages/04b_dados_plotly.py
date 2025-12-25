@@ -51,12 +51,13 @@ try:
         
         st.markdown("---")
         
-        # Gráfico de Status
+        # Gráfico de Tipologia
         st.subheader("Status Distribution")
-        status_data = servico.obter_resumo_por_status()
-        if not status_data.empty:
+        tipologia = servico.obter_tipologia()
+        if tipologia:
+            df_tipo = pd.DataFrame(tipologia, columns=['status', 'quantidade'])
             fig = px.pie(
-                status_data,
+                df_tipo,
                 values='quantidade',
                 names='status',
                 title="Distribuição de Status",
@@ -67,16 +68,16 @@ try:
     
     with tab2:
         st.subheader("📦 Top 20 Módulos/Componentes")
-        componentes = servico.obter_resumo_por_componente()
+        modulos = servico.obter_top_modulos()
         
-        if not componentes.empty:
-            top20 = componentes.head(20).sort_values('quantidade')
+        if modulos:
+            df_modulos = pd.DataFrame(modulos[:20], columns=['modulo', 'quantidade']).sort_values('quantidade')
             
             fig = px.barh(
-                top20,
+                df_modulos,
                 x='quantidade',
-                y='componente',
-                title="Componentes mais acionados",
+                y='modulo',
+                title="Módulos mais acionados",
                 color='quantidade',
                 color_continuous_scale="Viridis",
                 hover_data={'quantidade': True}
@@ -84,26 +85,26 @@ try:
             fig.update_layout(
                 height=600,
                 xaxis_title="Quantidade de Tickets",
-                yaxis_title="Componente"
+                yaxis_title="Módulo"
             )
             st.plotly_chart(fig, use_container_width=True)
             
             # Tabela com números
             st.markdown("---")
             st.subheader("Dados Tabulares")
-            st.dataframe(componentes.head(20), use_container_width=True)
+            st.dataframe(pd.DataFrame(modulos[:20], columns=['Módulo', 'Quantidade']), use_container_width=True)
         else:
-            st.warning("Nenhum dado de componentes disponível")
+            st.warning("Nenhum dado de módulos disponível")
     
     with tab3:
         st.subheader("🖥️ Top 20 Servidores")
-        servidores = servico.obter_resumo_por_servidor()
+        servidores = servico.obter_top_servidores()
         
-        if not servidores.empty:
-            top20 = servidores.head(20).sort_values('quantidade')
+        if servidores:
+            df_servidores = pd.DataFrame(servidores[:20], columns=['servidor', 'quantidade']).sort_values('quantidade')
             
             fig = px.barh(
-                top20,
+                df_servidores,
                 x='quantidade',
                 y='servidor',
                 title="Servidores mais acionados",
@@ -121,7 +122,7 @@ try:
             # Tabela com números
             st.markdown("---")
             st.subheader("Dados Tabulares")
-            st.dataframe(servidores.head(20), use_container_width=True)
+            st.dataframe(pd.DataFrame(servidores[:20], columns=['Servidor', 'Quantidade']), use_container_width=True)
         else:
             st.warning("Nenhum dado de servidores disponível")
     
@@ -131,11 +132,12 @@ try:
         col1, col2 = st.columns(2)
         
         with col1:
-            st.subheader("Por Status")
-            status_data = servico.obter_resumo_por_status()
-            if not status_data.empty:
+            st.subheader("Por Tipologia/Status")
+            tipologia = servico.obter_tipologia()
+            if tipologia:
+                df_tipo = pd.DataFrame(tipologia, columns=['status', 'quantidade'])
                 fig = px.bar(
-                    status_data,
+                    df_tipo,
                     x='status',
                     y='quantidade',
                     title="Tickets por Status",
@@ -146,15 +148,16 @@ try:
                 st.plotly_chart(fig, use_container_width=True)
         
         with col2:
-            st.subheader("Por Prioridade")
-            prioridade_data = servico.obter_resumo_por_prioridade()
-            if not prioridade_data.empty:
+            st.subheader("Por Origem")
+            origem = servico.obter_origem()
+            if origem:
+                df_origem = pd.DataFrame(origem, columns=['origem', 'quantidade'])
                 fig = px.bar(
-                    prioridade_data,
-                    x='prioridade',
+                    df_origem,
+                    x='origem',
                     y='quantidade',
-                    title="Tickets por Prioridade",
-                    color='prioridade',
+                    title="Tickets por Origem",
+                    color='origem',
                     color_discrete_sequence=px.colors.qualitative.Bold
                 )
                 fig.update_layout(height=400)

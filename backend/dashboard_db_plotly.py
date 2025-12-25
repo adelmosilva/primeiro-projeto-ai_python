@@ -133,12 +133,13 @@ try:
         
         # ========== GRÁFICOS INTERATIVOS COM PLOTLY ==========
         
-        # Gráfico 1: Status Distribution
-        st.subheader("📊 Distribuição de Status")
-        resumo_status = servico.obter_resumo_por_status()
-        if not resumo_status.empty:
+        # Gráfico 1: Tipologia Distribution
+        st.subheader("📊 Distribuição por Tipologia")
+        tipologia = servico.obter_tipologia()
+        if tipologia:
+            df_tipo = pd.DataFrame(tipologia, columns=['status', 'quantidade'])
             fig = px.pie(
-                resumo_status, 
+                df_tipo, 
                 values='quantidade', 
                 names='status',
                 title="Tickets por Status",
@@ -149,48 +150,49 @@ try:
         
         st.markdown("---")
         
-        # Gráfico 2: Prioridade Distribution
-        st.subheader("🎯 Distribuição por Prioridade")
-        resumo_prioridade = servico.obter_resumo_por_prioridade()
-        if not resumo_prioridade.empty:
+        # Gráfico 2: Origem Distribution
+        st.subheader("🎯 Distribuição por Origem/Prioridade")
+        origem = servico.obter_origem()
+        if origem:
+            df_origem = pd.DataFrame(origem, columns=['origem', 'quantidade'])
             fig = px.bar(
-                resumo_prioridade,
-                x='prioridade',
+                df_origem,
+                x='origem',
                 y='quantidade',
-                title="Tickets por Prioridade",
-                color='prioridade',
+                title="Tickets por Origem",
+                color='origem',
                 color_discrete_sequence=px.colors.qualitative.Bold
             )
-            fig.update_layout(height=400, xaxis_title="Prioridade", yaxis_title="Quantidade")
+            fig.update_layout(height=400, xaxis_title="Origem", yaxis_title="Quantidade")
             st.plotly_chart(fig, use_container_width=True)
         
         st.markdown("---")
         
-        # Gráfico 3: Componentes
-        st.subheader("📦 Top 10 Componentes")
-        resumo_componentes = servico.obter_resumo_por_componente()
-        if not resumo_componentes.empty:
-            top10 = resumo_componentes.head(10).sort_values('quantidade')
+        # Gráfico 3: Top Módulos
+        st.subheader("📦 Top 10 Módulos")
+        modulos = servico.obter_top_modulos()
+        if modulos:
+            df_modulos = pd.DataFrame(modulos[:10], columns=['modulo', 'quantidade']).sort_values('quantidade')
             fig = px.barh(
-                top10,
+                df_modulos,
                 x='quantidade',
-                y='componente',
-                title="Componentes com Mais Tickets",
+                y='modulo',
+                title="Módulos com Mais Tickets",
                 color='quantidade',
                 color_continuous_scale="Viridis"
             )
-            fig.update_layout(height=400, xaxis_title="Quantidade", yaxis_title="Componente")
+            fig.update_layout(height=400, xaxis_title="Quantidade", yaxis_title="Módulo")
             st.plotly_chart(fig, use_container_width=True)
         
         st.markdown("---")
         
-        # Gráfico 4: Servidores
+        # Gráfico 4: Top Servidores
         st.subheader("🖥️ Top 10 Servidores")
-        resumo_servidores = servico.obter_resumo_por_servidor()
-        if not resumo_servidores.empty:
-            top10 = resumo_servidores.head(10).sort_values('quantidade')
+        servidores = servico.obter_top_servidores()
+        if servidores:
+            df_servidores = pd.DataFrame(servidores[:10], columns=['servidor', 'quantidade']).sort_values('quantidade')
             fig = px.barh(
-                top10,
+                df_servidores,
                 x='quantidade',
                 y='servidor',
                 title="Servidores com Mais Tickets",
@@ -204,34 +206,33 @@ try:
         st.subheader(f"📅 Período: {mes}/{ano}")
         
         # Dados do período
-        dados_periodo = servico.obter_tickets_por_mes(mes, ano)
+        dados_periodo = servico.obter_tickets_por_periodo(mes, ano)
         if not dados_periodo.empty:
-            col1, col2, col3 = st.columns(3)
+            col1, col2 = st.columns(2)
             with col1:
                 st.metric("Total", len(dados_periodo))
             with col2:
-                st.metric("Abertos", len(dados_periodo[dados_periodo['status'] == 'Aberto']))
-            with col3:
-                st.metric("Fechados", len(dados_periodo[dados_periodo['status'] == 'Fechado']))
+                st.metric("Abertos", len(dados_periodo[dados_periodo['status'] != 'Fechado']))
             
             # Gráfico temporal
-            fig = px.histogram(
-                dados_periodo,
-                x='data_criacao',
-                nbins=30,
-                title=f"Distribuição Temporal - {mes}/{ano}",
-                color_discrete_sequence=['#636EFA']
-            )
-            fig.update_layout(height=400, xaxis_title="Data", yaxis_title="Quantidade")
-            st.plotly_chart(fig, use_container_width=True)
+            if 'data_criacao' in dados_periodo.columns:
+                fig = px.histogram(
+                    dados_periodo,
+                    x='data_criacao',
+                    nbins=30,
+                    title=f"Distribuição Temporal - {mes}/{ano}",
+                    color_discrete_sequence=['#636EFA']
+                )
+                fig.update_layout(height=400, xaxis_title="Data", yaxis_title="Quantidade")
+                st.plotly_chart(fig, use_container_width=True)
         else:
             st.warning("Nenhum dado disponível para este período")
     
     elif modo == "📈 Comparativo de Meses":
         st.subheader(f"📈 Comparando {mes1}/{ano1} vs {mes2}/{ano2}")
         
-        dados1 = servico.obter_tickets_por_mes(mes1, ano1)
-        dados2 = servico.obter_tickets_por_mes(mes2, ano2)
+        dados1 = servico.obter_tickets_por_periodo(mes1, ano1)
+        dados2 = servico.obter_tickets_por_periodo(mes2, ano2)
         
         if not dados1.empty and not dados2.empty:
             col1, col2, col3, col4 = st.columns(4)
