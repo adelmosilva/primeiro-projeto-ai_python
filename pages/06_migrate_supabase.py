@@ -11,6 +11,10 @@ import paramiko
 from datetime import datetime
 import sys
 
+# Importar footer helper
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from backend.footer_helper import exibir_rodape
+
 st.set_page_config(page_title="Migração Supabase", layout="wide")
 
 st.title("📊 Migração: VPS → Supabase")
@@ -297,3 +301,6 @@ if st.session_state.migration_status == "running":
                 """)
                 
                 st.session_state.migration_status = "done"
+
+# Rodapé com versão
+exibir_rodape()

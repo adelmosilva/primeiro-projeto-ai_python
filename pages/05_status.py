@@ -14,6 +14,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 sys.path.insert(0, str(PROJECT_ROOT / "backend"))
 
 from backend.theme_manager import configurar_tema_completo
+from backend.footer_helper import exibir_rodape
 configurar_tema_completo()
 
 st.title("📋 Status do Sistema AGT 4.0")
@@ -127,3 +128,6 @@ st.write("""
 st.markdown("---")
 
 st.caption("AGT 4.0 - Sistema de Análise de Tickets | Database Edition v1.0")
+
+# Rodapé com versão
+exibir_rodape()

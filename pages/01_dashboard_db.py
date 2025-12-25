@@ -21,6 +21,7 @@ sys.path.insert(0, str(PROJECT_ROOT / "backend"))
 
 # Importar tema manager
 from backend.theme_manager import configurar_tema_completo
+from backend.footer_helper import exibir_rodape
 
 # Configurar tema
 configurar_tema_completo()
@@ -53,3 +54,6 @@ except Exception as e:
     st.error(f"❌ Erro ao carregar dashboard: {e}")
     import traceback
     st.code(traceback.format_exc())
+
+# Rodapé com versão
+exibir_rodape()

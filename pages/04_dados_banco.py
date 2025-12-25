@@ -15,6 +15,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 sys.path.insert(0, str(PROJECT_ROOT / "backend"))
 
 from backend.theme_manager import configurar_tema_completo
+from backend.footer_helper import exibir_rodape
 configurar_tema_completo()
 
 st.title("👀 Dados do Banco de Dados")
@@ -81,3 +82,6 @@ except Exception as e:
 
 st.markdown("---")
 st.caption("Dados atualizados em tempo real do PostgreSQL 17")
+
+# Rodapé com versão
+exibir_rodape()

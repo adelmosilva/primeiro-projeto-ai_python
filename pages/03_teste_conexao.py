@@ -14,6 +14,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 sys.path.insert(0, str(PROJECT_ROOT / "backend"))
 
 from backend.theme_manager import configurar_tema_completo
+from backend.footer_helper import exibir_rodape
 configurar_tema_completo()
 
 st.title("🧪 Teste de Conexão com Banco de Dados")
@@ -62,3 +63,6 @@ if st.button("▶️ Executar Teste", use_container_width=True, type="primary"):
 
 st.markdown("---")
 st.info("💡 Se o teste falhar, verifique:\n1. SSH key em `backend/vps_key.pem`\n2. VPS IP: 91.108.124.150\n3. Porta: 5432")
+
+# Rodapé com versão
+exibir_rodape()
