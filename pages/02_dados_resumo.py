@@ -69,18 +69,18 @@ try:
             st.plotly_chart(fig, use_container_width=True)
     
     with tab2:
-        st.subheader("📦 Top 20 Módulos/Componentes")
-        modulos = servico.obter_top_modulos()
+        st.subheader("� Top 20 Responsáveis")
+        responsaveis = servico.obter_top_responsaveis()
         
-        if modulos:
-            df_modulos = pd.DataFrame(modulos[:20], columns=['modulo', 'quantidade']).sort_values('quantidade')
+        if responsaveis:
+            df_responsaveis = pd.DataFrame(responsaveis[:20], columns=['responsavel', 'quantidade']).sort_values('quantidade')
             
             fig = px.bar(
-                df_modulos,
+                df_responsaveis,
                 x='quantidade',
-                y='modulo',
+                y='responsavel',
                 orientation='h',
-                title="Módulos mais acionados",
+                title="Responsáveis mais acionados",
                 color='quantidade',
                 color_continuous_scale="Blues",
                 hover_data={'quantidade': True}
@@ -88,16 +88,16 @@ try:
             fig.update_layout(
                 height=600,
                 xaxis_title="Quantidade de Tickets",
-                yaxis_title="Módulo"
+                yaxis_title="Responsável"
             )
             st.plotly_chart(fig, use_container_width=True)
             
             # Tabela com números
             st.markdown("---")
             st.subheader("Dados Tabulares")
-            st.dataframe(pd.DataFrame(modulos[:20], columns=['Módulo', 'Quantidade']), use_container_width=True)
+            st.dataframe(pd.DataFrame(responsaveis[:20], columns=['Responsável', 'Quantidade']), use_container_width=True)
         else:
-            st.warning("Nenhum dado de módulos disponível")
+            st.warning("Nenhum dado de responsáveis disponível")
     
     with tab3:
         st.subheader("🖥️ Top 20 Servidores")

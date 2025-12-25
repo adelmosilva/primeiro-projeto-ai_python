@@ -170,21 +170,21 @@ try:
         
         st.markdown("---")
         
-        # Gráfico 3: Top Módulos
-        st.subheader("📦 Top 10 Módulos")
-        modulos = servico.obter_top_modulos()
-        if modulos:
-            df_modulos = pd.DataFrame(modulos[:10], columns=['modulo', 'quantidade']).sort_values('quantidade')
+        # Gráfico 3: Top Responsáveis
+        st.subheader("👤 Top 10 Responsáveis")
+        responsaveis = servico.obter_top_responsaveis()
+        if responsaveis:
+            df_responsaveis = pd.DataFrame(responsaveis[:10], columns=['responsavel', 'quantidade']).sort_values('quantidade')
             fig = px.bar(
-                df_modulos,
+                df_responsaveis,
                 x='quantidade',
-                y='modulo',
+                y='responsavel',
                 orientation='h',
-                title="Módulos com Mais Tickets",
+                title="Responsáveis com Mais Tickets",
                 color='quantidade',
                 color_continuous_scale="Blues"
             )
-            fig.update_layout(height=400, xaxis_title="Quantidade", yaxis_title="Módulo")
+            fig.update_layout(height=400, xaxis_title="Quantidade", yaxis_title="Responsável")
             st.plotly_chart(fig, use_container_width=True)
         
         st.markdown("---")

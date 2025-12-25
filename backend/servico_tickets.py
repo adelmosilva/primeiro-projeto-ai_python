@@ -158,6 +158,31 @@ class ServicoTicketDB:
         df = self._executar_query(sql)
         return [(row['servidor_cluster'], row['total']) for _, row in df.iterrows()]
     
+    def obter_top_responsaveis(self, mes: int = None, ano: int = None) -> List[Tuple[str, int]]:
+        """Obtém top 10 responsáveis por tickets"""
+        
+        if mes and ano:
+            data_inicio = f"{ano}-{mes:02d}-01"
+            if mes == 12:
+                data_fim = f"{ano + 1}-01-01"
+            else:
+                data_fim = f"{ano}-{mes + 1:02d}-01"
+            
+            filtro = f"WHERE data_criacao >= '{data_inicio}' AND data_criacao < '{data_fim}'"
+        else:
+            filtro = ""
+        
+        sql = f"""
+        SELECT responsavel, COUNT(*) as total 
+        FROM tickets {filtro}
+        GROUP BY responsavel 
+        ORDER BY total DESC 
+        LIMIT 10
+        """
+        
+        df = self._executar_query(sql)
+        return [(row['responsavel'], row['total']) for _, row in df.iterrows()]
+    
     def obter_tipologia(self, mes: int = None, ano: int = None) -> List[Tuple[str, int]]:
         """Obtém tipologia (tipo de item) dos tickets"""
         
