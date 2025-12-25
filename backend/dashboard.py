@@ -266,9 +266,9 @@ elif opcao == "📊 Comparativo de Períodos":
                 analises_prioridade = AnalysisService.analisar_por_prioridade(tickets_atu)
                 analises_servidor = AnalysisService.analisar_por_servidor(tickets_atu)
                 
-                # Análises para Top 10 e Acumulado
-                top_10_servidores_atual = AnalysisService.top_10_servidores_abertos(tickets_atu)
-                top_10_servidores_acumulado = AnalysisService.top_10_servidores_abertos(tickets_ant + tickets_atu)
+                # Análises para Top 10 e Acumulado (por total de tickets)
+                top_10_servidores_atual = AnalysisService.top_10_servidores_por_total(tickets_atu)
+                top_10_servidores_acumulado = AnalysisService.top_10_servidores_por_total(tickets_ant + tickets_atu)
                 resumo_acumulado = AnalysisService.calcular_resumo_acumulado(tickets_ant, tickets_atu)
                 tmp_atu_path.unlink()
             

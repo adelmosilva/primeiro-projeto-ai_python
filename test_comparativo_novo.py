@@ -55,23 +55,23 @@ def test_novo_comparativo():
         print(f"  - Abertos: {resumo_atu['total_abertos']}")
         print(f"  - Fechados: {resumo_atu['total_fechados']}")
         
-        # Testar Top 10 Servidores Atual
-        print("\n🏢 Top 10 Servidores - Período Atual:")
-        top_10_atual = AnalysisService.top_10_servidores_abertos(tickets_atu)
+        # Testar Top 10 Servidores Atual (por TOTAL de tickets)
+        print("\n🏢 Top 10 Servidores - Período Atual (por Total de Tickets):")
+        top_10_atual = AnalysisService.top_10_servidores_por_total(tickets_atu)
         if top_10_atual:
             for servidor, count in top_10_atual:
-                print(f"  • {servidor}: {count} tickets abertos")
+                print(f"  • {servidor}: {count} tickets")
         else:
-            print("  (Nenhum servidor com tickets abertos)")
+            print("  (Nenhum servidor)")
         
-        # Testar Top 10 Servidores Acumulado
-        print("\n🏢 Top 10 Servidores - Acumulado:")
-        top_10_acum = AnalysisService.top_10_servidores_abertos(tickets_ant + tickets_atu)
+        # Testar Top 10 Servidores Acumulado (por TOTAL de tickets)
+        print("\n🏢 Top 10 Servidores - Acumulado (por Total de Tickets):")
+        top_10_acum = AnalysisService.top_10_servidores_por_total(tickets_ant + tickets_atu)
         if top_10_acum:
             for servidor, count in top_10_acum:
-                print(f"  • {servidor}: {count} tickets abertos")
+                print(f"  • {servidor}: {count} tickets")
         else:
-            print("  (Nenhum servidor com tickets abertos)")
+            print("  (Nenhum servidor)")
         
         # Testar Resumo Acumulado
         print("\n📊 Resumo Acumulado:")

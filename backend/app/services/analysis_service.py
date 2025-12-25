@@ -160,6 +160,28 @@ class AnalysisService:
         return top_10
     
     @staticmethod
+    def top_10_servidores_por_total(tickets: List[Ticket]) -> List[tuple]:
+        """
+        Retorna top 10 servidores com MAIS TICKETS NO TOTAL
+        (Útil para ver quais servidores mais geraram tickets)
+        
+        Args:
+            tickets: Lista de Tickets
+            
+        Returns:
+            Lista de tuplas (servidor, count) ordenada decrescente
+        """
+        servidor_count = {}
+        
+        for ticket in tickets:
+            serv = ticket.servidor or "Não especificado"
+            servidor_count[serv] = servidor_count.get(serv, 0) + 1
+        
+        # Ordenar e retornar top 10
+        top_10 = sorted(servidor_count.items(), key=lambda x: x[1], reverse=True)[:10]
+        return top_10
+    
+    @staticmethod
     def calcular_resumo_acumulado(tickets_periodo1: List[Ticket], tickets_periodo2: List[Ticket]) -> Dict[str, Any]:
         """
         Calcula resumo acumulado entre dois períodos

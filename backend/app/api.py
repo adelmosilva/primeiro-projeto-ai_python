@@ -172,9 +172,9 @@ async def upload_comparativo(
         analises_prioridade = AnalysisService.analisar_por_prioridade(tickets_atu)
         analises_servidor = AnalysisService.analisar_por_servidor(tickets_atu)
         
-        # Top 10 servidores com tickets abertos
-        top_10_servidores_atual = AnalysisService.top_10_servidores_abertos(tickets_atu)
-        top_10_servidores_acumulado = AnalysisService.top_10_servidores_abertos(tickets_ant + tickets_atu)
+        # Top 10 servidores com mais tickets (total do período)
+        top_10_servidores_atual = AnalysisService.top_10_servidores_por_total(tickets_atu)
+        top_10_servidores_acumulado = AnalysisService.top_10_servidores_por_total(tickets_ant + tickets_atu)
         
         # Resumo acumulado
         resumo_acumulado = AnalysisService.calcular_resumo_acumulado(tickets_ant, tickets_atu)
