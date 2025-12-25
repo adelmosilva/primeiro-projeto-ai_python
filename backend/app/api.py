@@ -179,6 +179,11 @@ async def upload_comparativo(
         # Resumo acumulado
         resumo_acumulado = AnalysisService.calcular_resumo_acumulado(tickets_ant, tickets_atu)
         
+        # Tabelas detalhadas para relatório
+        tabela_tipologia = AnalysisService.tabela_tipologia(tickets_ant, tickets_atu)
+        tabela_top10_modulos = AnalysisService.tabela_top10_modulos(tickets_ant, tickets_atu)
+        tabela_origem = AnalysisService.tabela_origem(tickets_ant, tickets_atu)
+        
         # Gerar comparativo
         comparativo = {
             'periodo_anterior': arquivo_anterior.filename.split("_")[1] if "_" in arquivo_anterior.filename else "Anterior",
@@ -217,7 +222,10 @@ async def upload_comparativo(
             resumo_anterior=resumo_ant,
             resumo_acumulado=resumo_acumulado,
             top_10_servidores_atual=top_10_servidores_atual,
-            top_10_servidores_acumulado=top_10_servidores_acumulado
+            top_10_servidores_acumulado=top_10_servidores_acumulado,
+            tabela_tipologia=tabela_tipologia,
+            tabela_top10_modulos=tabela_top10_modulos,
+            tabela_origem=tabela_origem
         )
         
         # Limpar temporários

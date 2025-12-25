@@ -270,6 +270,11 @@ elif opcao == "📊 Comparativo de Períodos":
                 top_10_servidores_atual = AnalysisService.top_10_servidores_por_total(tickets_atu)
                 top_10_servidores_acumulado = AnalysisService.top_10_servidores_por_total(tickets_ant + tickets_atu)
                 resumo_acumulado = AnalysisService.calcular_resumo_acumulado(tickets_ant, tickets_atu)
+                
+                # Tabelas detalhadas para relatório
+                tabela_tipologia = AnalysisService.tabela_tipologia(tickets_ant, tickets_atu)
+                tabela_top10_modulos = AnalysisService.tabela_top10_modulos(tickets_ant, tickets_atu)
+                tabela_origem = AnalysisService.tabela_origem(tickets_ant, tickets_atu)
                 tmp_atu_path.unlink()
             
             # Comparativo
@@ -390,6 +395,47 @@ elif opcao == "📊 Comparativo de Períodos":
                 
                 st.markdown("---")
             
+            # Tabelas Detalhadas
+            if tabela_tipologia or tabela_top10_modulos or tabela_origem:
+                st.subheader("📊 Análises Detalhadas Comparativas")
+                
+                # Tipologia
+                if tabela_tipologia:
+                    st.markdown("#### Distribuição por Tipologia")
+                    df_tipologia = pd.DataFrame(tabela_tipologia)
+                    # Renomear colunas para exibição
+                    df_tipologia_display = df_tipologia.copy()
+                    df_tipologia_display.columns = ['Tipologia', 'Abertos Ant.', 'Abertos Atu.', 
+                                                     'Fechados Ant.', 'Fechados Atu.', 'Total Ant.', 'Total Atu.']
+                    st.dataframe(df_tipologia_display, use_container_width=True, hide_index=True)
+                
+                st.divider()
+                
+                # Top 10 Módulos
+                if tabela_top10_modulos:
+                    st.markdown("#### Top 10 Módulos/Servidores (Comparativo)")
+                    df_modulos = pd.DataFrame(tabela_top10_modulos)
+                    df_modulos_display = df_modulos.copy()
+                    df_modulos_display.columns = ['Módulo', 'Abertos Ant.', 'Abertos Atu.', 
+                                                   'Fechados Ant.', 'Fechados Atu.']
+                    st.dataframe(df_modulos_display, use_container_width=True, hide_index=True)
+                
+                st.divider()
+                
+                # Origem
+                if tabela_origem:
+                    st.markdown("#### Distribuição por Origem")
+                    df_origem = pd.DataFrame(tabela_origem)
+                    df_origem_display = df_origem.copy()
+                    # Formatar percentuais
+                    df_origem_display['percentual_anterior'] = df_origem_display['percentual_anterior'].apply(lambda x: f"{x:.1f}%")
+                    df_origem_display['percentual_atual'] = df_origem_display['percentual_atual'].apply(lambda x: f"{x:.1f}%")
+                    df_origem_display.columns = ['Origem', 'Abertos Ant.', 'Abertos Atu.', 'Fechados Ant.', 
+                                                 'Fechados Atu.', 'Total Ant.', 'Total Atu.', '% Ant.', '% Atu.']
+                    st.dataframe(df_origem_display, use_container_width=True, hide_index=True)
+                
+                st.markdown("---")
+            
             st.subheader("📄 Gerar Relatório Comparativo")
             
             if st.button("Gerar PDF Comparativo com Gráficos", use_container_width=True, type="primary"):
@@ -429,7 +475,10 @@ elif opcao == "📊 Comparativo de Períodos":
                         resumo_anterior=resumo_ant,
                         resumo_acumulado=resumo_acumulado,
                         top_10_servidores_atual=top_10_servidores_atual,
-                        top_10_servidores_acumulado=top_10_servidores_acumulado
+                        top_10_servidores_acumulado=top_10_servidores_acumulado,
+                        tabela_tipologia=tabela_tipologia,
+                        tabela_top10_modulos=tabela_top10_modulos,
+                        tabela_origem=tabela_origem
                     )
                     
                     with open(pdf_path, "rb") as pdf_file:

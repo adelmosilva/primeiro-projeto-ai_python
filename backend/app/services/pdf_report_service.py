@@ -198,7 +198,10 @@ class PDFReportService:
         resumo_anterior: Dict[str, Any] = None,
         resumo_acumulado: Dict[str, Any] = None,
         top_10_servidores_atual: List[tuple] = None,
-        top_10_servidores_acumulado: List[tuple] = None
+        top_10_servidores_acumulado: List[tuple] = None,
+        tabela_tipologia: List[Dict[str, Any]] = None,
+        tabela_top10_modulos: List[Dict[str, Any]] = None,
+        tabela_origem: List[Dict[str, Any]] = None
     ) -> Path:
         """
         Gera relatório em PDF
@@ -532,6 +535,100 @@ class PDFReportService:
                     ('FONTSIZE', (0, 1), (-1, -1), 9),
                 ]))
                 story.append(top10_acum_table)
+        
+        # Seções de Tabelas Detalhadas (se fornecidas)
+        if tabela_tipologia:
+            story.append(PageBreak())
+            story.append(Paragraph("11. ANALISE POR TIPOLOGIA", secao))
+            story.append(Spacer(1, 0.3*cm))
+            
+            tip_data = [['Tipologia', 'Abertos Ant', 'Abertos Atu', 'Fechados Ant', 'Fechados Atu', 'Total Ant', 'Total Atu']]
+            for row in tabela_tipologia:
+                tip_data.append([
+                    str(row['tipologia']),
+                    str(row['abertos_anterior']),
+                    str(row['abertos_atual']),
+                    str(row['fechados_anterior']),
+                    str(row['fechados_atual']),
+                    str(row['total_anterior']),
+                    str(row['total_atual'])
+                ])
+            
+            tip_table = Table(tip_data, colWidths=[2.5*cm, 1.8*cm, 1.8*cm, 1.8*cm, 1.8*cm, 1.8*cm, 1.8*cm])
+            tip_table.setStyle(TableStyle([
+                ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#1f4788')),
+                ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                ('FONTSIZE', (0, 0), (-1, 0), 9),
+                ('BOTTOMPADDING', (0, 0), (-1, 0), 6),
+                ('BACKGROUND', (0, 1), (-1, -1), colors.lightyellow),
+                ('GRID', (0, 0), (-1, -1), 1, colors.black),
+                ('FONTSIZE', (0, 1), (-1, -1), 8),
+            ]))
+            story.append(tip_table)
+        
+        if tabela_top10_modulos:
+            story.append(PageBreak())
+            story.append(Paragraph("12. TOP 10 MODULOS (SERVIDORES/CLUSTERS)", secao))
+            story.append(Spacer(1, 0.3*cm))
+            
+            mod_data = [['Modulo', 'Abertos Ant', 'Abertos Atu', 'Fechados Ant', 'Fechados Atu']]
+            for row in tabela_top10_modulos:
+                mod_data.append([
+                    str(row['modulo'])[:25],
+                    str(row['abertos_anterior']),
+                    str(row['abertos_atual']),
+                    str(row['fechados_anterior']),
+                    str(row['fechados_atual'])
+                ])
+            
+            mod_table = Table(mod_data, colWidths=[5*cm, 2*cm, 2*cm, 2*cm, 2*cm])
+            mod_table.setStyle(TableStyle([
+                ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2e5c8a')),
+                ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                ('FONTSIZE', (0, 0), (-1, 0), 9),
+                ('BOTTOMPADDING', (0, 0), (-1, 0), 6),
+                ('BACKGROUND', (0, 1), (-1, -1), colors.lightgreen),
+                ('GRID', (0, 0), (-1, -1), 1, colors.black),
+                ('FONTSIZE', (0, 1), (-1, -1), 8),
+            ]))
+            story.append(mod_table)
+        
+        if tabela_origem:
+            story.append(PageBreak())
+            story.append(Paragraph("13. ANALISE POR ORIGEM (DATABASE, MIDDLEWARE, INFRA, AD/BI)", secao))
+            story.append(Spacer(1, 0.3*cm))
+            
+            ori_data = [['Origem', 'Abertos Ant', 'Abertos Atu', 'Fechados Ant', 'Fechados Atu', 'Total Ant', 'Total Atu', '% Ant', '% Atu']]
+            for row in tabela_origem:
+                ori_data.append([
+                    str(row['origem']),
+                    str(row['abertos_anterior']),
+                    str(row['abertos_atual']),
+                    str(row['fechados_anterior']),
+                    str(row['fechados_atual']),
+                    str(row['total_anterior']),
+                    str(row['total_atual']),
+                    f"{row['percentual_anterior']}%",
+                    f"{row['percentual_atual']}%"
+                ])
+            
+            ori_table = Table(ori_data, colWidths=[2.2*cm, 1.5*cm, 1.5*cm, 1.5*cm, 1.5*cm, 1.5*cm, 1.5*cm, 1.2*cm, 1.2*cm])
+            ori_table.setStyle(TableStyle([
+                ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#1f4788')),
+                ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                ('FONTSIZE', (0, 0), (-1, 0), 9),
+                ('BOTTOMPADDING', (0, 0), (-1, 0), 6),
+                ('BACKGROUND', (0, 1), (-1, -1), colors.lightblue),
+                ('GRID', (0, 0), (-1, -1), 1, colors.black),
+                ('FONTSIZE', (0, 1), (-1, -1), 8),
+            ]))
+            story.append(ori_table)
         
         # Build PDF
         doc.build(story)
