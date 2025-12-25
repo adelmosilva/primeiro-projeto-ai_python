@@ -63,9 +63,9 @@ try:
                 title="Distribuição de Status",
                 color_discrete_sequence=px.colors.sequential.Blues
             )
-            fig.update_traces(textposition='inside', textinfo='label+percent',
-                            textfont=dict(size=14))
-            fig.update_layout(height=500, showlegend=False)
+            fig.update_traces(textposition='outside', textinfo='label+percent',
+                            textfont=dict(size=14, weight='bold'))
+            fig.update_layout(height=750, showlegend=False)
             st.plotly_chart(fig, use_container_width=True)
     
     with tab2:
@@ -148,7 +148,7 @@ try:
                     color='status',
                     color_discrete_sequence=px.colors.sequential.Blues
                 )
-                fig.update_layout(height=400)
+                fig.update_layout(height=400, showlegend=False)
                 st.plotly_chart(fig, use_container_width=True)
         
         with col2:
@@ -164,7 +164,7 @@ try:
                     color='origem',
                     color_discrete_sequence=px.colors.sequential.Blues_r
                 )
-                fig.update_layout(height=400)
+                fig.update_layout(height=400, showlegend=False)
                 st.plotly_chart(fig, use_container_width=True)
 
 except Exception as e:
