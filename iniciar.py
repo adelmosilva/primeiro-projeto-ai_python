@@ -30,10 +30,19 @@ def banner():
 def menu():
     """Menu de opções."""
     print("\n🎯 Selecione uma opção:\n")
-    print("  1️⃣  Dashboard Novo (Com Banco de Dados) - RECOMENDADO")
-    print("  2️⃣  Dashboard Antigo (Com Upload de CSV)")
+    print("  1️⃣  Dashboard com Banco de Dados (PostgreSQL) - RECOMENDADO")
+    print("     → Dados em tempo real, sem limites")
+    print()
+    print("  2️⃣  Dashboard com Upload de Novos CSVs")
+    print("     → Importar e analisar arquivos CSV do Jira")
+    print("     → Comparativo entre períodos")
+    print()
     print("  3️⃣  Testar Conexão com Banco")
+    print("     → Verificar acesso ao PostgreSQL via SSH")
+    print()
     print("  4️⃣  Ver Dados do Banco")
+    print("     → Preview dos módulos, servidores e tipologia")
+    print()
     print("  5️⃣  Sair")
     print()
     
@@ -100,8 +109,15 @@ def ver_dados():
 def iniciar_dashboard(modo):
     """Inicia o dashboard."""
     if modo == "1":
-        print("\n🚀 Iniciando Dashboard Novo (Com Banco de Dados)...")
+        print("\n🚀 Iniciando Dashboard com Banco de Dados...")
         print("   Abrindo em http://localhost:8501")
+        print("   ")
+        print("   ✨ Funcionalidades:")
+        print("      • Dados em tempo real do PostgreSQL")
+        print("      • 3 modos: Geral, Período, Comparativo")
+        print("      • Sem limites de dados")
+        print("      • Carregamento rápido com cache")
+        print("   ")
         print("   Pressione Ctrl+C para encerrar\n")
         
         try:
@@ -115,8 +131,15 @@ def iniciar_dashboard(modo):
             print("❌ Streamlit não encontrado. Instale com: pip install streamlit")
     
     elif modo == "2":
-        print("\n🚀 Iniciando Dashboard Antigo (Upload de CSV)...")
+        print("\n🚀 Iniciando Dashboard com Upload de CSVs...")
         print("   Abrindo em http://localhost:8501")
+        print("   ")
+        print("   ✨ Funcionalidades:")
+        print("      • Fazer upload de novos CSVs do Jira")
+        print("      • Analisar período específico")
+        print("      • Comparar entre dois períodos")
+        print("      • Gerar relatórios em PDF")
+        print("   ")
         print("   Pressione Ctrl+C para encerrar\n")
         
         try:

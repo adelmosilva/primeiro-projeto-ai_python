@@ -8,6 +8,7 @@ import pandas as pd
 from datetime import datetime
 import sys
 from pathlib import Path
+import matplotlib.pyplot as plt
 
 # Adicionar ao path
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -191,10 +192,11 @@ if modo == "📊 Dashboard Geral":
                     columns=["Tipo", "Total"]
                 )
                 
-                st.pie_chart(
-                    data=df_tipo.set_index("Tipo")["Total"],
-                    use_container_width=True
-                )
+                # Pie chart com matplotlib
+                fig, ax = plt.subplots(figsize=(8, 6))
+                ax.pie(df_tipo["Total"], labels=df_tipo["Tipo"], autopct="%1.1f%%", startangle=90)
+                ax.set_title("Distribuição por Tipo")
+                st.pyplot(fig)
                 
                 st.dataframe(
                     df_tipo,
@@ -339,14 +341,18 @@ elif modo == "📈 Comparativo":
             tipologia_geral = servico.obter_tipologia()
             if tipologia_geral:
                 df_t_geral = pd.DataFrame(tipologia_geral, columns=["Tipo", "Total"])
-                st.pie_chart(df_t_geral.set_index("Tipo")["Total"])
+                fig1, ax1 = plt.subplots(figsize=(6, 4))
+                ax1.pie(df_t_geral["Total"], labels=df_t_geral["Tipo"], autopct="%1.1f%%")
+                st.pyplot(fig1)
         
         with col2:
             st.write(f"**{['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'][mes-1]}/{ano}**")
             tipologia_periodo = servico.obter_tipologia(mes, ano)
             if tipologia_periodo:
                 df_t_per = pd.DataFrame(tipologia_periodo, columns=["Tipo", "Total"])
-                st.pie_chart(df_t_per.set_index("Tipo")["Total"])
+                fig2, ax2 = plt.subplots(figsize=(6, 4))
+                ax2.pie(df_t_per["Total"], labels=df_t_per["Tipo"], autopct="%1.1f%%")
+                st.pyplot(fig2)
         
     except Exception as e:
         st.error(f"❌ Erro: {e}")
