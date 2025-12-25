@@ -184,7 +184,7 @@ class ServicoTicketDB:
         return [(row['responsavel'], row['total']) for _, row in df.iterrows()]
     
     def obter_tipologia(self, mes: int = None, ano: int = None) -> List[Tuple[str, int]]:
-        """Obtém tipologia (tipo de item) dos tickets"""
+        """Obtém tipologia (tipo de item) dos tickets - apenas Support, Incident e Tarefa"""
         
         if mes and ano:
             data_inicio = f"{ano}-{mes:02d}-01"
@@ -193,9 +193,9 @@ class ServicoTicketDB:
             else:
                 data_fim = f"{ano}-{mes + 1:02d}-01"
             
-            filtro = f"WHERE data_criacao >= '{data_inicio}' AND data_criacao < '{data_fim}'"
+            filtro = f"WHERE data_criacao >= '{data_inicio}' AND data_criacao < '{data_fim}' AND tipo_item IN ('Support', 'Incident', 'Tarefa')"
         else:
-            filtro = ""
+            filtro = "WHERE tipo_item IN ('Support', 'Incident', 'Tarefa')"
         
         sql = f"""
         SELECT tipo_item, COUNT(*) as total 

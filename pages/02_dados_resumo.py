@@ -69,7 +69,7 @@ try:
             st.plotly_chart(fig, use_container_width=True)
     
     with tab2:
-        st.subheader("� Top 20 Responsáveis")
+        st.subheader("🧑 Top 20 em Atendimento")
         responsaveis = servico.obter_top_responsaveis()
         
         if responsaveis:
@@ -80,7 +80,7 @@ try:
                 x='quantidade',
                 y='responsavel',
                 orientation='h',
-                title="Responsáveis mais acionados",
+                title="Responsáveis em Atendimento",
                 color='quantidade',
                 color_continuous_scale="Blues",
                 hover_data={'quantidade': True}

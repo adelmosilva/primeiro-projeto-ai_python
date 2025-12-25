@@ -170,8 +170,8 @@ try:
         
         st.markdown("---")
         
-        # Gráfico 3: Top Responsáveis
-        st.subheader("👤 Top 10 Responsáveis")
+        # Gráfico 3: Top em Atendimento
+        st.subheader("👤 Top 10 em Atendimento")
         responsaveis = servico.obter_top_responsaveis()
         if responsaveis:
             df_responsaveis = pd.DataFrame(responsaveis[:10], columns=['responsavel', 'quantidade']).sort_values('quantidade')
@@ -180,7 +180,7 @@ try:
                 x='quantidade',
                 y='responsavel',
                 orientation='h',
-                title="Responsáveis com Mais Tickets",
+                title="Responsáveis em Atendimento",
                 color='quantidade',
                 color_continuous_scale="Blues"
             )
