@@ -117,8 +117,6 @@ if opcao == "📈 Análise de Período":
                     for k, v in analises_tipologia.items()
                 ])
                 st.dataframe(df_tipologia, use_container_width=True)
-                
-                st.bar_chart(df_tipologia.set_index("Tipologia")["Total"])
             
             with tab2:
                 df_componente = pd.DataFrame([
@@ -131,8 +129,6 @@ if opcao == "📈 Análise de Período":
                     for k, v in analises_componente.items()
                 ])
                 st.dataframe(df_componente, use_container_width=True)
-                
-                st.bar_chart(df_componente.set_index("Componente")["Total"])
             
             with tab3:
                 df_origem = pd.DataFrame([
@@ -145,8 +141,6 @@ if opcao == "📈 Análise de Período":
                     for k, v in analises_origem.items()
                 ])
                 st.dataframe(df_origem, use_container_width=True)
-                
-                st.bar_chart(df_origem.set_index("Origem")["Total"])
             
             with tab4:
                 df_prioridade = pd.DataFrame([
@@ -159,8 +153,6 @@ if opcao == "📈 Análise de Período":
                     for k, v in analises_prioridade.items()
                 ])
                 st.dataframe(df_prioridade, use_container_width=True)
-                
-                st.bar_chart(df_prioridade.set_index("Prioridade")["Total"])
             
             # Aba adicional para Servidor/Cluster
             with st.expander("🖥️ Análise por Servidor/Cluster"):
