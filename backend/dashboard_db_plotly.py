@@ -133,16 +133,16 @@ try:
         
         # ========== GRÁFICOS INTERATIVOS COM PLOTLY ==========
         
-        # Gráfico 1: Tipologia Distribution
-        st.subheader("📊 Distribuição por Tipologia")
-        tipologia = servico.obter_tipologia()
-        if tipologia:
-            df_tipo = pd.DataFrame(tipologia, columns=['status', 'quantidade'])
+        # Gráfico 1: Componentes Distribution
+        st.subheader("📊 Distribuição por Componentes")
+        componentes = servico.obter_componentes()
+        if componentes:
+            df_comp = pd.DataFrame(componentes, columns=['componente', 'quantidade'])
             fig = px.pie(
-                df_tipo, 
+                df_comp, 
                 values='quantidade', 
-                names='status',
-                title="Tickets por Status",
+                names='componente',
+                title="Tickets por Componentes",
                 color_discrete_sequence=px.colors.sequential.Blues
             )
             fig.update_traces(textposition='outside', textinfo='label+percent', 

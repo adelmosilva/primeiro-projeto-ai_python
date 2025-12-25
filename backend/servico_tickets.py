@@ -232,6 +232,30 @@ class ServicoTicketDB:
         df = self._executar_query(sql)
         return [(row['relator'], row['total']) for _, row in df.iterrows()]
     
+    def obter_componentes(self, mes: int = None, ano: int = None) -> List[Tuple[str, int]]:
+        """Obtém distribuição de tickets por componentes"""
+        
+        if mes and ano:
+            data_inicio = f"{ano}-{mes:02d}-01"
+            if mes == 12:
+                data_fim = f"{ano + 1}-01-01"
+            else:
+                data_fim = f"{ano}-{mes + 1:02d}-01"
+            
+            filtro = f"WHERE data_criacao >= '{data_inicio}' AND data_criacao < '{data_fim}'"
+        else:
+            filtro = ""
+        
+        sql = f"""
+        SELECT componente, COUNT(*) as total 
+        FROM tickets {filtro}
+        GROUP BY componente 
+        ORDER BY total DESC
+        """
+        
+        df = self._executar_query(sql)
+        return [(row['componente'], row['total']) for _, row in df.iterrows()]
+    
     def obter_resumo(self, mes: int = None, ano: int = None) -> Dict:
         """Obtém resumo geral de tickets"""
         
