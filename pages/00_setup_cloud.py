@@ -10,8 +10,21 @@ from pathlib import Path
 import paramiko
 from io import StringIO
 import time
+import socket
 
 st.set_page_config(page_title="⚙️ Setup Cloud", layout="wide", initial_sidebar_state="collapsed")
+
+# ============= HELPER FUNCTIONS =============
+
+def resolve_ipv4_only(hostname, port):
+    """Resolve hostname to IPv4 address only (disable IPv6)"""
+    try:
+        addr_info = socket.getaddrinfo(hostname, port, socket.AF_INET, socket.SOCK_STREAM)
+        if addr_info:
+            return addr_info[0][4][0]
+    except Exception as e:
+        print(f"⚠️ IPv4 resolution failed: {e}, falling back to hostname")
+    return hostname
 
 st.title("⚙️ Setup Inicial - Supabase Migration")
 st.markdown("""
@@ -47,13 +60,13 @@ if 'migration_step' not in st.session_state:
 # ============= FUNÇÕES =============
 
 def test_supabase():
-    """Testa conexão ao Supabase com retry e timeouts"""
-    import time
+    """Testa conexão ao Supabase com retry e IPv4 only"""
+    ipv4_host = resolve_ipv4_only(SUPABASE_HOST, SUPABASE_PORT)
     
     for attempt in range(3):
         try:
             conn = psycopg2.connect(
-                host=SUPABASE_HOST,
+                host=ipv4_host,
                 port=SUPABASE_PORT,
                 user=SUPABASE_USER,
                 password=SUPABASE_PASSWORD,
@@ -73,13 +86,13 @@ def test_supabase():
             return False, str(e)
 
 def create_tables():
-    """Cria tabelas no Supabase com retry"""
-    import time
+    """Cria tabelas no Supabase com IPv4 only"""
+    ipv4_host = resolve_ipv4_only(SUPABASE_HOST, SUPABASE_PORT)
     
     for attempt in range(3):
         try:
             conn = psycopg2.connect(
-                host=SUPABASE_HOST,
+                host=ipv4_host,
                 port=SUPABASE_PORT,
                 user=SUPABASE_USER,
                 password=SUPABASE_PASSWORD,
@@ -200,13 +213,13 @@ def export_from_vps():
     return csv_data
 
 def import_to_supabase(csv_data):
-    """Importa dados para Supabase com retry"""
-    import time
+    """Importa dados para Supabase com IPv4 only"""
+    ipv4_host = resolve_ipv4_only(SUPABASE_HOST, SUPABASE_PORT)
     
     for attempt in range(3):
         try:
             conn = psycopg2.connect(
-                host=SUPABASE_HOST,
+                host=ipv4_host,
                 port=SUPABASE_PORT,
                 user=SUPABASE_USER,
                 password=SUPABASE_PASSWORD,
@@ -275,13 +288,13 @@ def import_to_supabase(csv_data):
     return inserted, errors
 
 def validate_migration():
-    """Valida se a migração funcionou com retry"""
-    import time
+    """Valida se a migração funcionou com IPv4 only"""
+    ipv4_host = resolve_ipv4_only(SUPABASE_HOST, SUPABASE_PORT)
     
     for attempt in range(3):
         try:
             conn = psycopg2.connect(
-                host=SUPABASE_HOST,
+                host=ipv4_host,
                 port=SUPABASE_PORT,
                 user=SUPABASE_USER,
                 password=SUPABASE_PASSWORD,

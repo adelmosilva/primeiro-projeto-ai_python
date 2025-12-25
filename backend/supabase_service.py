@@ -8,6 +8,8 @@ import psycopg2
 from psycopg2 import sql
 import streamlit as st
 from typing import Optional
+import socket
+import time
 
 # Credenciais Supabase
 SUPABASE_HOST = "db.nmsarhysujzhpjbpnqtl.supabase.co"
@@ -15,6 +17,16 @@ SUPABASE_USER = "postgres"
 SUPABASE_PASSWORD = "Dx220304@28010"
 SUPABASE_DB = "postgres"
 SUPABASE_PORT = 5432
+
+def resolve_ipv4_only(hostname, port):
+    """Resolve hostname to IPv4 address only (disable IPv6)"""
+    try:
+        addr_info = socket.getaddrinfo(hostname, port, socket.AF_INET, socket.SOCK_STREAM)
+        if addr_info:
+            return addr_info[0][4][0]
+    except Exception as e:
+        print(f"⚠️ IPv4 resolution failed: {e}, falling back to hostname")
+    return hostname
 
 class SupabaseTicketService:
     """Serviço para acessar tickets do Supabase"""
@@ -24,9 +36,7 @@ class SupabaseTicketService:
         self._conectar()
     
     def _conectar(self):
-        """Conecta ao Supabase PostgreSQL com retry e keepalives"""
-        import time
-        
+        """Conecta ao Supabase PostgreSQL com IPv4 only e retry"""
         try:
             # Tentar obter credenciais do Streamlit Cloud Secrets primeiro
             try:
@@ -46,11 +56,14 @@ class SupabaseTicketService:
             if not all([host, user, password]):
                 raise Exception("Credenciais do Supabase não configuradas")
             
+            # Resolver apenas IPv4 (disable IPv6)
+            ipv4_host = resolve_ipv4_only(host, port)
+            
             # Conectar com retry e keepalives
             for attempt in range(3):
                 try:
                     self.connection = psycopg2.connect(
-                        host=host,
+                        host=ipv4_host,
                         port=port,
                         user=user,
                         password=password,
