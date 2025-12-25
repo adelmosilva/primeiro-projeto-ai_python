@@ -13,5 +13,6 @@ st.set_page_config(page_title="Dashboard DB", page_icon="📊", layout="wide")
 PROJETO_DIR = Path(__file__).parent.parent
 sys.path.insert(0, str(PROJETO_DIR))
 
-# Executar o dashboard_db.py
-exec(open(PROJETO_DIR / "backend" / "dashboard_db.py").read())
+# Executar o dashboard_db.py com encoding utf-8
+with open(PROJETO_DIR / "backend" / "dashboard_db.py", "r", encoding="utf-8") as f:
+    exec(f.read())
