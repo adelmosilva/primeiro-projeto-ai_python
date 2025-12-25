@@ -47,53 +47,54 @@ if 'migration_step' not in st.session_state:
 # ============= FUNÇÕES =============
 
 def test_supabase():
-    """Testa conexão ao Supabase (força IPv4 com fallbacks)"""
-    try:
-        import socket
-        
-        # Tentar resolver com socket.getaddrinfo
+    """Testa conexão ao Supabase com retry e timeouts"""
+    import time
+    
+    for attempt in range(3):
         try:
-            addr_info = socket.getaddrinfo(SUPABASE_HOST, SUPABASE_PORT, socket.AF_INET)
-            ipv4_host = addr_info[0][4][0]
-        except:
-            # Fallback: tentar DNS público
-            try:
-                addr_info = socket.getaddrinfo(SUPABASE_HOST, SUPABASE_PORT, socket.AF_INET, socket.SOCK_STREAM)
-                ipv4_host = addr_info[0][4][0]
-            except:
-                # Fallback 2: usar hostname direto (pode tentar IPv6)
-                ipv4_host = SUPABASE_HOST
-        
-        conn = psycopg2.connect(
-            host=ipv4_host,
-            port=SUPABASE_PORT,
-            user=SUPABASE_USER,
-            password=SUPABASE_PASSWORD,
-            database=SUPABASE_DB,
-            connect_timeout=10
-        )
-        conn.close()
-        return True, "Conectado com sucesso!"
-    except Exception as e:
-        return False, str(e)
+            conn = psycopg2.connect(
+                host=SUPABASE_HOST,
+                port=SUPABASE_PORT,
+                user=SUPABASE_USER,
+                password=SUPABASE_PASSWORD,
+                database=SUPABASE_DB,
+                connect_timeout=15,
+                keepalives=1,
+                keepalives_idle=10,
+                keepalives_interval=5,
+                keepalives_count=5
+            )
+            conn.close()
+            return True, "Conectado com sucesso!"
+        except Exception as e:
+            if attempt < 2:
+                time.sleep(2)  # Aguardar antes de retry
+                continue
+            return False, str(e)
 
 def create_tables():
-    """Cria tabelas no Supabase (força IPv4 com fallbacks)"""
-    import socket
+    """Cria tabelas no Supabase com retry"""
+    import time
     
-    try:
-        addr_info = socket.getaddrinfo(SUPABASE_HOST, SUPABASE_PORT, socket.AF_INET)
-        ipv4_host = addr_info[0][4][0]
-    except:
-        ipv4_host = SUPABASE_HOST
+    for attempt in range(3):
+        try:
+            conn = psycopg2.connect(
+                host=SUPABASE_HOST,
+                port=SUPABASE_PORT,
+                user=SUPABASE_USER,
+                password=SUPABASE_PASSWORD,
+                database=SUPABASE_DB,
+                connect_timeout=15,
+                keepalives=1,
+                keepalives_idle=10
+            )
+            break
+        except Exception as e:
+            if attempt < 2:
+                time.sleep(2)
+                continue
+            raise
     
-    conn = psycopg2.connect(
-        host=ipv4_host,
-        port=SUPABASE_PORT,
-        user=SUPABASE_USER,
-        password=SUPABASE_PASSWORD,
-        database=SUPABASE_DB
-    )
     cursor = conn.cursor()
     
     sql = """
@@ -199,14 +200,27 @@ def export_from_vps():
     return csv_data
 
 def import_to_supabase(csv_data):
-    """Importa dados para Supabase (força IPv4 com fallbacks)"""
-    import socket
+    """Importa dados para Supabase com retry"""
+    import time
     
-    try:
-        addr_info = socket.getaddrinfo(SUPABASE_HOST, SUPABASE_PORT, socket.AF_INET)
-        ipv4_host = addr_info[0][4][0]
-    except:
-        ipv4_host = SUPABASE_HOST
+    for attempt in range(3):
+        try:
+            conn = psycopg2.connect(
+                host=SUPABASE_HOST,
+                port=SUPABASE_PORT,
+                user=SUPABASE_USER,
+                password=SUPABASE_PASSWORD,
+                database=SUPABASE_DB,
+                connect_timeout=15,
+                keepalives=1,
+                keepalives_idle=10
+            )
+            break
+        except Exception as e:
+            if attempt < 2:
+                time.sleep(2)
+                continue
+            raise
     
     df = pd.read_csv(StringIO(csv_data))
     
@@ -261,22 +275,27 @@ def import_to_supabase(csv_data):
     return inserted, errors
 
 def validate_migration():
-    """Valida se a migração funcionou (força IPv4 com fallbacks)"""
-    import socket
+    """Valida se a migração funcionou com retry"""
+    import time
     
-    try:
-        addr_info = socket.getaddrinfo(SUPABASE_HOST, SUPABASE_PORT, socket.AF_INET)
-        ipv4_host = addr_info[0][4][0]
-    except:
-        ipv4_host = SUPABASE_HOST
-    
-    conn = psycopg2.connect(
-        host=ipv4_host,
-        port=SUPABASE_PORT,
-        user=SUPABASE_USER,
-        password=SUPABASE_PASSWORD,
-        database=SUPABASE_DB
-    )
+    for attempt in range(3):
+        try:
+            conn = psycopg2.connect(
+                host=SUPABASE_HOST,
+                port=SUPABASE_PORT,
+                user=SUPABASE_USER,
+                password=SUPABASE_PASSWORD,
+                database=SUPABASE_DB,
+                connect_timeout=15,
+                keepalives=1,
+                keepalives_idle=10
+            )
+            break
+        except Exception as e:
+            if attempt < 2:
+                time.sleep(2)
+                continue
+            raise
     cursor = conn.cursor()
     cursor.execute("SELECT COUNT(*) FROM tickets")
     count = cursor.fetchone()[0]

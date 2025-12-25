@@ -24,10 +24,10 @@ class SupabaseTicketService:
         self._conectar()
     
     def _conectar(self):
-        """Conecta ao Supabase PostgreSQL (força IPv4)"""
+        """Conecta ao Supabase PostgreSQL com retry e keepalives"""
+        import time
+        
         try:
-            import socket
-            
             # Tentar obter credenciais do Streamlit Cloud Secrets primeiro
             try:
                 host = st.secrets.get("SUPABASE_HOST", SUPABASE_HOST)
@@ -46,22 +46,28 @@ class SupabaseTicketService:
             if not all([host, user, password]):
                 raise Exception("Credenciais do Supabase não configuradas")
             
-            # Forçar IPv4 para evitar problemas em Streamlit Cloud
-            try:
-                addr_info = socket.getaddrinfo(host, port, socket.AF_INET)
-                ipv4_host = addr_info[0][4][0]
-            except:
-                # Fallback: usar hostname direto
-                ipv4_host = host
-            
-            self.connection = psycopg2.connect(
-                host=ipv4_host,
-                port=port,
-                user=user,
-                password=password,
-                database=database
-            )
-            print("✅ Conectado ao Supabase!")
+            # Conectar com retry e keepalives
+            for attempt in range(3):
+                try:
+                    self.connection = psycopg2.connect(
+                        host=host,
+                        port=port,
+                        user=user,
+                        password=password,
+                        database=database,
+                        connect_timeout=15,
+                        keepalives=1,
+                        keepalives_idle=10,
+                        keepalives_interval=5,
+                        keepalives_count=5
+                    )
+                    print("✅ Conectado ao Supabase!")
+                    break
+                except Exception as e:
+                    if attempt < 2:
+                        time.sleep(2)
+                        continue
+                    raise
             
         except Exception as e:
             print(f"❌ Erro ao conectar ao Supabase: {e}")
