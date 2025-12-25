@@ -152,20 +152,20 @@ try:
         
         st.markdown("---")
         
-        # Gráfico 2: Origem Distribution
-        st.subheader("🎯 Distribuição por Origem/Prioridade")
+        # Gráfico 2: Relator Distribution
+        st.subheader("👤 Distribuição por Relator")
         origem = servico.obter_origem()
         if origem:
-            df_origem = pd.DataFrame(origem, columns=['origem', 'quantidade'])
+            df_origem = pd.DataFrame(origem, columns=['relator', 'quantidade'])
             fig = px.bar(
                 df_origem,
-                x='origem',
+                x='relator',
                 y='quantidade',
-                title="Tickets por Origem",
-                color='origem',
+                title="Tickets por Relator",
+                color='relator',
                 color_discrete_sequence=px.colors.sequential.Blues_r
             )
-            fig.update_layout(height=400, xaxis_title="Origem", yaxis_title="Quantidade")
+            fig.update_layout(height=400, xaxis_title="Relator", yaxis_title="Quantidade")
             st.plotly_chart(fig, use_container_width=True)
         
         st.markdown("---")
