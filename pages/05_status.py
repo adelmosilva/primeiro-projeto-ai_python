@@ -4,8 +4,17 @@ Página 5: Status do Sistema
 
 import streamlit as st
 from pathlib import Path
+import sys
 
 st.set_page_config(page_title="Status", page_icon="📋", layout="wide")
+
+# Configurar paths e tema
+PROJECT_ROOT = Path(__file__).parent.parent
+sys.path.insert(0, str(PROJECT_ROOT))
+sys.path.insert(0, str(PROJECT_ROOT / "backend"))
+
+from backend.theme_manager import configurar_tema_completo
+configurar_tema_completo()
 
 st.title("📋 Status do Sistema AGT 4.0")
 st.markdown("---")

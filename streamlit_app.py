@@ -11,12 +11,18 @@ PROJECT_ROOT = Path(__file__).parent
 sys.path.insert(0, str(PROJECT_ROOT))
 sys.path.insert(0, str(PROJECT_ROOT / "backend"))
 
+# Importar tema manager
+from backend.theme_manager import configurar_tema_completo
+
 st.set_page_config(
     page_title="AGT 4.0 - Sistema de Análise de Tickets",
     page_icon="📊",
     layout="wide",
     initial_sidebar_state="expanded"
 )
+
+# Configurar tema
+configurar_tema_completo()
 
 st.title("📊 AGT 4.0 - Sistema de Análise de Tickets")
 st.info("""

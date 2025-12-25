@@ -9,6 +9,14 @@ from pathlib import Path
 
 st.set_page_config(page_title="Dados Banco", page_icon="👀", layout="wide")
 
+# Configurar paths e tema
+PROJECT_ROOT = Path(__file__).parent.parent
+sys.path.insert(0, str(PROJECT_ROOT))
+sys.path.insert(0, str(PROJECT_ROOT / "backend"))
+
+from backend.theme_manager import configurar_tema_completo
+configurar_tema_completo()
+
 st.title("👀 Dados do Banco de Dados")
 st.markdown("Preview dos módulos, servidores e tipologia")
 st.markdown("---")
