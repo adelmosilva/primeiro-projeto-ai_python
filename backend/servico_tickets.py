@@ -193,19 +193,29 @@ class ServicoTicketDB:
             else:
                 data_fim = f"{ano}-{mes + 1:02d}-01"
             
-            filtro = f"WHERE data_criacao >= '{data_inicio}' AND data_criacao < '{data_fim}' AND tipo_item IN ('Support', 'Incident', 'Tarefa')"
+            filtro = f"WHERE data_criacao >= '{data_inicio}' AND data_criacao < '{data_fim}'"
         else:
-            filtro = "WHERE tipo_item IN ('Support', 'Incident', 'Tarefa')"
+            filtro = ""
         
         sql = f"""
         SELECT tipo_item, COUNT(*) as total 
         FROM tickets {filtro}
+        WHERE tipo_item IN ('Support', 'Incident', 'Tarefa')
         GROUP BY tipo_item 
         ORDER BY total DESC
         """
         
         df = self._executar_query(sql)
-        return [(row['tipo_item'], row['total']) for _, row in df.iterrows()]
+        resultado = [(row['tipo_item'], row['total']) for _, row in df.iterrows()]
+        
+        # Garantir que sempre retorna os 3 tipos, mesmo com 0 tickets
+        tipos_esperados = {'Support', 'Incident', 'Tarefa'}
+        tipos_encontrados = {item[0] for item in resultado}
+        
+        for tipo in tipos_esperados - tipos_encontrados:
+            resultado.append((tipo, 0))
+        
+        return sorted(resultado, key=lambda x: x[1], reverse=True)
     
     def obter_origem(self, mes: int = None, ano: int = None) -> List[Tuple[str, int]]:
         """Obtém origem (relator) dos tickets"""
