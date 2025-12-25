@@ -47,10 +47,15 @@ if 'migration_step' not in st.session_state:
 # ============= FUNÇÕES =============
 
 def test_supabase():
-    """Testa conexão ao Supabase"""
+    """Testa conexão ao Supabase (força IPv4)"""
     try:
+        import socket
+        # Resolver hostname manualmente para forçar IPv4
+        addr_info = socket.getaddrinfo(SUPABASE_HOST, SUPABASE_PORT, socket.AF_INET)
+        ipv4_host = addr_info[0][4][0]
+        
         conn = psycopg2.connect(
-            host=SUPABASE_HOST,
+            host=ipv4_host,
             port=SUPABASE_PORT,
             user=SUPABASE_USER,
             password=SUPABASE_PASSWORD,
@@ -63,9 +68,13 @@ def test_supabase():
         return False, str(e)
 
 def create_tables():
-    """Cria tabelas no Supabase"""
+    """Cria tabelas no Supabase (força IPv4)"""
+    import socket
+    addr_info = socket.getaddrinfo(SUPABASE_HOST, SUPABASE_PORT, socket.AF_INET)
+    ipv4_host = addr_info[0][4][0]
+    
     conn = psycopg2.connect(
-        host=SUPABASE_HOST,
+        host=ipv4_host,
         port=SUPABASE_PORT,
         user=SUPABASE_USER,
         password=SUPABASE_PASSWORD,
@@ -176,11 +185,15 @@ def export_from_vps():
     return csv_data
 
 def import_to_supabase(csv_data):
-    """Importa dados para Supabase"""
+    """Importa dados para Supabase (força IPv4)"""
+    import socket
+    addr_info = socket.getaddrinfo(SUPABASE_HOST, SUPABASE_PORT, socket.AF_INET)
+    ipv4_host = addr_info[0][4][0]
+    
     df = pd.read_csv(StringIO(csv_data))
     
     conn = psycopg2.connect(
-        host=SUPABASE_HOST,
+        host=ipv4_host,
         port=SUPABASE_PORT,
         user=SUPABASE_USER,
         password=SUPABASE_PASSWORD,
@@ -230,9 +243,13 @@ def import_to_supabase(csv_data):
     return inserted, errors
 
 def validate_migration():
-    """Valida se a migração funcionou"""
+    """Valida se a migração funcionou (força IPv4)"""
+    import socket
+    addr_info = socket.getaddrinfo(SUPABASE_HOST, SUPABASE_PORT, socket.AF_INET)
+    ipv4_host = addr_info[0][4][0]
+    
     conn = psycopg2.connect(
-        host=SUPABASE_HOST,
+        host=ipv4_host,
         port=SUPABASE_PORT,
         user=SUPABASE_USER,
         password=SUPABASE_PASSWORD,

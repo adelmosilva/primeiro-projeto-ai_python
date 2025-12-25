@@ -24,8 +24,10 @@ class SupabaseTicketService:
         self._conectar()
     
     def _conectar(self):
-        """Conecta ao Supabase PostgreSQL"""
+        """Conecta ao Supabase PostgreSQL (força IPv4)"""
         try:
+            import socket
+            
             # Tentar obter credenciais do Streamlit Cloud Secrets primeiro
             try:
                 host = st.secrets.get("SUPABASE_HOST", SUPABASE_HOST)
@@ -44,8 +46,15 @@ class SupabaseTicketService:
             if not all([host, user, password]):
                 raise Exception("Credenciais do Supabase não configuradas")
             
+            # Forçar IPv4 para evitar problemas em Streamlit Cloud
+            try:
+                addr_info = socket.getaddrinfo(host, port, socket.AF_INET)
+                ipv4_host = addr_info[0][4][0]
+            except:
+                ipv4_host = host
+            
             self.connection = psycopg2.connect(
-                host=host,
+                host=ipv4_host,
                 port=port,
                 user=user,
                 password=password,
