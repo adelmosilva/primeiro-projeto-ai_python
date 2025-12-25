@@ -355,7 +355,8 @@ elif opcao == "📊 Comparativo de Períodos":
                 
                 # Período Atual
                 if top_10_servidores_atual:
-                    st.markdown("#### 📊 Período Atual")
+                    total_abertos_atual = resumo_atu['total_abertos']
+                    st.markdown(f"#### 📊 Período Atual (Total: {total_abertos_atual} tickets)")
                     df_top10_atual = pd.DataFrame(
                         top_10_servidores_atual,
                         columns=["Servidor/Cluster", "Tickets Abertos"]
@@ -363,10 +364,8 @@ elif opcao == "📊 Comparativo de Períodos":
                     
                     # Calcular soma dos demais servidores
                     top10_sum = df_top10_atual["Tickets Abertos"].sum()
-                    total_servidores = analises_servidor.get(resumo_atu.get('total_abertos', 0), 0) if analises_servidor else 0
                     
                     # Calcular total de tickets abertos de forma mais confiável
-                    total_abertos_atual = resumo_atu['total_abertos']
                     demais_sum = max(0, total_abertos_atual - top10_sum)
                     
                     # Adicionar linha "Demais servidores"
@@ -391,7 +390,8 @@ elif opcao == "📊 Comparativo de Períodos":
                 
                 # Acumulado
                 if top_10_servidores_acumulado:
-                    st.markdown("#### 📈 Acumulado (Ambos os Períodos)")
+                    total_abertos_acum = resumo_acumulado['total_abertos']
+                    st.markdown(f"#### 📈 Acumulado (Ambos os Períodos) (Total: {total_abertos_acum} tickets)")
                     df_top10_acumulado = pd.DataFrame(
                         top_10_servidores_acumulado,
                         columns=["Servidor/Cluster", "Tickets Abertos"]
@@ -399,7 +399,6 @@ elif opcao == "📊 Comparativo de Períodos":
                     
                     # Calcular soma dos demais servidores
                     top10_sum_acum = df_top10_acumulado["Tickets Abertos"].sum()
-                    total_abertos_acum = resumo_acumulado['total_abertos']
                     demais_sum_acum = max(0, total_abertos_acum - top10_sum_acum)
                     
                     # Adicionar linha "Demais servidores"
