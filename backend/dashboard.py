@@ -19,6 +19,7 @@ from app.services.ticket_service import TicketService
 from app.services.analysis_service import AnalysisService
 from app.services.pdf_report_service import PDFReportService
 from app.config import REPORTS_OUTPUT_DIR, UPLOADS_DIR
+from backend.auto_migrar import migrar_csv_para_banco
 
 # Configurar página
 st.set_page_config(
@@ -70,6 +71,20 @@ if opcao == "📈 Análise de Período":
                     f.write(uploaded_file.getbuffer())
                 
                 st.info(f"✅ Arquivo salvo em: `uploads/{csv_filename}`")
+                
+                # Migrar automaticamente para o banco de dados
+                st.info("⏳ Sincronizando com banco de dados...")
+                sucesso, resultado = migrar_csv_para_banco(csv_path)
+                
+                if sucesso:
+                    total_csv = resultado.get('total_csv', 0)
+                    total_banco = resultado.get('total_banco', 0)
+                    st.success(f"✅ Banco de dados sincronizado!\n\n"
+                              f"- Tickets no CSV: {total_csv}\n"
+                              f"- Tickets no banco: {total_banco}")
+                else:
+                    erro = resultado.get('erro', 'Erro desconhecido')
+                    st.error(f"❌ Erro ao sincronizar banco de dados:\n{erro}")
                 
                 # Processar
                 tickets = parser_jira_csv(csv_path)
@@ -253,17 +268,31 @@ elif opcao == "📊 Comparativo de Períodos":
                 with open(csv_ant_path, "wb") as f:
                     f.write(arquivo_anterior.getbuffer())
                 
-                # Processar anterior
-                tickets_ant = parser_jira_csv(csv_ant_path)
-                service_ant = TicketService()
-                service_ant.carregar_tickets(tickets_ant)
-                resumo_ant = AnalysisService.calcular_resumo_executivo(tickets_ant)
-                
                 # Salvar arquivo atual
                 csv_atu_filename = f"upload_atual_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{arquivo_atual.name}"
                 csv_atu_path = UPLOADS_DIR / csv_atu_filename
                 with open(csv_atu_path, "wb") as f:
                     f.write(arquivo_atual.getbuffer())
+                
+                # Migrar automaticamente o arquivo atual (mais recente) para o banco
+                st.info("⏳ Sincronizando período atual com banco de dados...")
+                sucesso, resultado = migrar_csv_para_banco(csv_atu_path)
+                
+                if sucesso:
+                    total_csv = resultado.get('total_csv', 0)
+                    total_banco = resultado.get('total_banco', 0)
+                    st.success(f"✅ Banco de dados sincronizado com período atual!\n\n"
+                              f"- Tickets no CSV: {total_csv}\n"
+                              f"- Tickets no banco: {total_banco}")
+                else:
+                    erro = resultado.get('erro', 'Erro desconhecido')
+                    st.error(f"❌ Erro ao sincronizar banco de dados:\n{erro}")
+                
+                # Processar anterior
+                tickets_ant = parser_jira_csv(csv_ant_path)
+                service_ant = TicketService()
+                service_ant.carregar_tickets(tickets_ant)
+                resumo_ant = AnalysisService.calcular_resumo_executivo(tickets_ant)
                 
                 # Processar atual
                 tickets_atu = parser_jira_csv(csv_atu_path)
