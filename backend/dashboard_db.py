@@ -3,6 +3,9 @@ Dashboard Streamlit integrado com banco de dados PostgreSQL
 AGT 4.0 v2.0 - Database Edition
 """
 
+# ⚠️ IMPORTAR IPYTHON WRAPPER PRIMEIRO
+from backend import ipv4_socket_wrapper
+
 import streamlit as st
 import pandas as pd
 from datetime import datetime
@@ -13,7 +16,8 @@ import matplotlib.pyplot as plt
 # Adicionar ao path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from backend.servico_tickets import obter_servico
+# USAR unified_db_service em vez de servico_tickets direto
+from backend.unified_db_service import obter_servico
 from app.services.analysis_service import AnalysisService
 from app.services.pdf_report_service import PDFReportService
 from app.config import REPORTS_OUTPUT_DIR

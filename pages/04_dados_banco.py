@@ -2,6 +2,9 @@
 Página 4: Ver Dados do Banco
 """
 
+# ⚠️ IMPORTAR PRIMEIRO - FORÇA IPv4 GLOBALMENTE
+from backend import ipv4_socket_wrapper
+
 import streamlit as st
 import sys
 import pandas as pd
@@ -24,7 +27,7 @@ st.markdown("---")
 
 try:
     sys.path.insert(0, str(Path(__file__).parent.parent))
-    from backend.servico_tickets import obter_servico
+    from backend.unified_db_service import obter_servico
     
     servico = obter_servico()
     

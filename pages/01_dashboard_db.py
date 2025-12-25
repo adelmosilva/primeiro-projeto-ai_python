@@ -2,6 +2,9 @@
 Página 1: Dashboard com Banco de Dados PostgreSQL
 """
 
+# ⚠️ IMPORTAR PRIMEIRO - FORÇA IPv4 GLOBALMENTE
+from backend import ipv4_socket_wrapper
+
 import streamlit as st
 from pathlib import Path
 import sys
@@ -27,8 +30,8 @@ from backend.footer_helper import exibir_rodape
 configurar_tema_completo()
 
 try:
-    # Importar direto os módulos necessários
-    from backend.servico_tickets import obter_servico
+    # Importar do unified_db_service em vez de servico_tickets diretamente
+    from backend.unified_db_service import obter_servico
     from app.services.analysis_service import AnalysisService
     from app.config import REPORTS_OUTPUT_DIR
     import pandas as pd

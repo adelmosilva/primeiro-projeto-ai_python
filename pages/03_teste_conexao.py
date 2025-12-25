@@ -2,6 +2,9 @@
 Página 3: Teste de Conexão
 """
 
+# ⚠️ IMPORTAR PRIMEIRO - FORÇA IPv4 GLOBALMENTE
+from backend import ipv4_socket_wrapper
+
 import streamlit as st
 import sys
 from pathlib import Path
@@ -25,7 +28,7 @@ if st.button("▶️ Executar Teste", use_container_width=True, type="primary"):
     with st.spinner("Testando conexão..."):
         try:
             sys.path.insert(0, str(Path(__file__).parent.parent))
-            from backend.servico_tickets import obter_servico
+            from backend.unified_db_service import obter_servico
             
             servico = obter_servico()
             resumo = servico.obter_resumo()
