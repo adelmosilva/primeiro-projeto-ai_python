@@ -50,6 +50,20 @@ class ServicoTicketDB:
     def _executar_query(self, sql: str) -> pd.DataFrame:
         """Executa query SQL e retorna DataFrame"""
         if not self.ssh or not self.container_id:
+            # Retornar mensagem útil ao usuário
+            import streamlit as st
+            st.error("""
+            ❌ **Banco de Dados Indisponível no Streamlit Cloud**
+            
+            O banco de dados está em um servidor privado e não é acessível 
+            do Streamlit Cloud. Há 3 soluções disponíveis:
+            
+            1. **Usar banco em nuvem** (recomendado): Migrar para Supabase/Neon
+            2. **Tunnel público**: Usar ngrok para expor o banco
+            3. **API intermediária**: Criar API REST
+            
+            📖 Veja: `DATABASE_CLOUD_SETUP.md` para instruções detalhadas.
+            """)
             raise Exception("Não conectado ao banco de dados")
         
         try:
