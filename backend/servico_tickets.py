@@ -200,22 +200,36 @@ class ServicoTicketDB:
         sql = f"""
         SELECT tipo_item, COUNT(*) as total 
         FROM tickets {filtro}
-        WHERE tipo_item IN ('Support', 'Incident', 'Tarefa')
+        WHERE tipo_item IN ('Support', 'Incident', 'Tarefa', 'Suporte', 'Incidente')
         GROUP BY tipo_item 
         ORDER BY total DESC
         """
         
         df = self._executar_query(sql)
-        resultado = [(row['tipo_item'], row['total']) for _, row in df.iterrows()]
+        
+        # Traduzir valores para português
+        traducao = {
+            'Support': 'Suporte',
+            'Incident': 'Incidente',
+            'Suporte': 'Suporte',
+            'Incidente': 'Incidente',
+            'Tarefa': 'Tarefa'
+        }
+        
+        resultado = {}
+        for _, row in df.iterrows():
+            tipo_original = row['tipo_item']
+            tipo_traduzido = traducao.get(tipo_original, tipo_original)
+            resultado[tipo_traduzido] = resultado.get(tipo_traduzido, 0) + row['total']
         
         # Garantir que sempre retorna os 3 tipos, mesmo com 0 tickets
-        tipos_esperados = {'Support', 'Incident', 'Tarefa'}
-        tipos_encontrados = {item[0] for item in resultado}
+        tipos_esperados = {'Suporte', 'Incidente', 'Tarefa'}
         
-        for tipo in tipos_esperados - tipos_encontrados:
-            resultado.append((tipo, 0))
+        for tipo in tipos_esperados:
+            if tipo not in resultado:
+                resultado[tipo] = 0
         
-        return sorted(resultado, key=lambda x: x[1], reverse=True)
+        return sorted(resultado.items(), key=lambda x: x[1], reverse=True)
     
     def obter_origem(self, mes: int = None, ano: int = None) -> List[Tuple[str, int]]:
         """Obtém origem (relator) dos tickets"""
