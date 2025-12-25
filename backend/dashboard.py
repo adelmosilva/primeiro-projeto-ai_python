@@ -10,6 +10,8 @@ import shutil
 from datetime import datetime
 import sys
 import matplotlib.pyplot as plt
+import hashlib
+import json
 
 # Adicionar pasta ao path
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -21,7 +23,80 @@ from app.services.pdf_report_service import PDFReportService
 from app.config import REPORTS_OUTPUT_DIR, UPLOADS_DIR
 from backend.auto_migrar import migrar_csv_para_banco
 
-# Configurar página
+# ========== SISTEMA DE VALIDAÇÃO DE CSVs ==========
+
+UPLOADED_CSVS_LOG = UPLOADS_DIR / "uploaded_csvs.json"
+
+def calcular_hash_arquivo(file_content: bytes) -> str:
+    """Calcula o hash MD5 do arquivo para detecção de duplicatas"""
+    return hashlib.md5(file_content).hexdigest()
+
+def obter_csvs_enviados():
+    """Recupera lista de CSVs já enviados"""
+    if UPLOADED_CSVS_LOG.exists():
+        try:
+            with open(UPLOADED_CSVS_LOG, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except:
+            return {}
+    return {}
+
+def registrar_csv_enviado(filename: str, file_hash: str, timestamp: str):
+    """Registra um CSV como enviado"""
+    UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
+    
+    csvs = obter_csvs_enviados()
+    csvs[file_hash] = {
+        "filename": filename,
+        "hash": file_hash,
+        "timestamp": timestamp
+    }
+    
+    with open(UPLOADED_CSVS_LOG, 'w', encoding='utf-8') as f:
+        json.dump(csvs, f, indent=2, ensure_ascii=False)
+
+def verificar_csv_duplicado(file_hash: str) -> bool:
+    """Verifica se um CSV com mesmo hash já foi enviado"""
+    csvs = obter_csvs_enviados()
+    return file_hash in csvs
+
+def validar_csvs_comparativo(arquivo_anterior, arquivo_atual) -> tuple[bool, str]:
+    """
+    Valida os CSVs para o modo comparativo:
+    1. Verifica se não são o mesmo arquivo
+    2. Verifica se não foram enviados duplicados
+    
+    Retorna: (válido, mensagem)
+    """
+    if arquivo_anterior is None or arquivo_atual is None:
+        return False, ""
+    
+    # Obter conteúdo dos arquivos
+    conteudo_ant = arquivo_anterior.getbuffer()
+    conteudo_atu = arquivo_atual.getbuffer()
+    
+    # Verificar se são o mesmo arquivo
+    if conteudo_ant == conteudo_atu:
+        return False, "❌ Erro: Os dois CSVs são idênticos! Selecione arquivos diferentes."
+    
+    # Calcular hashes
+    hash_ant = calcular_hash_arquivo(bytes(conteudo_ant))
+    hash_atu = calcular_hash_arquivo(bytes(conteudo_atu))
+    
+    # Verificar se já foram enviados
+    csvs_enviados = obter_csvs_enviados()
+    
+    msg_alerta = ""
+    
+    if hash_ant in csvs_enviados:
+        csv_info = csvs_enviados[hash_ant]
+        msg_alerta += f"⚠️ CSV anterior já foi enviado em {csv_info['timestamp']}\n"
+    
+    if hash_atu in csvs_enviados:
+        csv_info = csvs_enviados[hash_atu]
+        msg_alerta += f"⚠️ CSV atual já foi enviado em {csv_info['timestamp']}\n"
+    
+    return True, msg_alerta
 st.set_page_config(
     page_title="AGT 4.0 - Dashboard",
     page_icon="📊",
@@ -63,12 +138,29 @@ if opcao == "📈 Análise de Período":
                 # Criar diretório se não existir
                 UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
                 
+                # Obter conteúdo e calcular hash
+                conteudo = uploaded_file.getbuffer()
+                file_hash = calcular_hash_arquivo(bytes(conteudo))
+                
+                # Verificar se já foi enviado
+                if verificar_csv_duplicado(file_hash):
+                    csvs = obter_csvs_enviados()
+                    csv_info = csvs[file_hash]
+                    st.warning(f"⚠️ **Este CSV já foi enviado anteriormente**\n\n"
+                              f"- Nome: `{csv_info['filename']}`\n"
+                              f"- Data: {csv_info['timestamp']}\n\n"
+                              f"Você pode continuar, mas o banco será atualizado com os mesmos dados.")
+                
                 # Salvar arquivo no diretório UPLOADS
                 csv_filename = f"upload_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{uploaded_file.name}"
                 csv_path = UPLOADS_DIR / csv_filename
                 
                 with open(csv_path, "wb") as f:
-                    f.write(uploaded_file.getbuffer())
+                    f.write(conteudo)
+                
+                # Registrar o CSV como enviado
+                timestamp = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
+                registrar_csv_enviado(csv_filename, file_hash, timestamp)
                 
                 st.info(f"✅ Arquivo salvo em: `uploads/{csv_filename}`")
                 
@@ -257,22 +349,47 @@ elif opcao == "📊 Comparativo de Períodos":
         periodo_atual = st.text_input("Nome do período atual:", value="Período Atual")
     
     if arquivo_anterior is not None and arquivo_atual is not None:
+        # Validar CSVs
+        valido, alerta = validar_csvs_comparativo(arquivo_anterior, arquivo_atual)
+        
+        if not valido:
+            st.error(alerta)
+            st.stop()
+        
+        if alerta:
+            st.warning(alerta)
+        
         try:
             with st.spinner("Processando arquivos..."):
                 # Criar diretório se não existir
                 UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
                 
+                # Obter conteúdo dos arquivos
+                conteudo_ant = arquivo_anterior.getbuffer()
+                conteudo_atu = arquivo_atual.getbuffer()
+                
+                # Calcular hashes
+                hash_ant = calcular_hash_arquivo(bytes(conteudo_ant))
+                hash_atu = calcular_hash_arquivo(bytes(conteudo_atu))
+                
                 # Salvar arquivo anterior
                 csv_ant_filename = f"upload_anterior_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{arquivo_anterior.name}"
                 csv_ant_path = UPLOADS_DIR / csv_ant_filename
                 with open(csv_ant_path, "wb") as f:
-                    f.write(arquivo_anterior.getbuffer())
+                    f.write(conteudo_ant)
+                
+                # Registrar anterior
+                timestamp = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
+                registrar_csv_enviado(csv_ant_filename, hash_ant, timestamp)
                 
                 # Salvar arquivo atual
                 csv_atu_filename = f"upload_atual_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{arquivo_atual.name}"
                 csv_atu_path = UPLOADS_DIR / csv_atu_filename
                 with open(csv_atu_path, "wb") as f:
-                    f.write(arquivo_atual.getbuffer())
+                    f.write(conteudo_atu)
+                
+                # Registrar atual
+                registrar_csv_enviado(csv_atu_filename, hash_atu, timestamp)
                 
                 # Migrar automaticamente o arquivo atual (mais recente) para o banco
                 st.info("⏳ Sincronizando período atual com banco de dados...")
@@ -314,7 +431,6 @@ elif opcao == "📊 Comparativo de Períodos":
                 tabela_tipologia = AnalysisService.tabela_tipologia(tickets_ant, tickets_atu)
                 tabela_top10_modulos = AnalysisService.tabela_top10_modulos(tickets_ant, tickets_atu)
                 tabela_origem = AnalysisService.tabela_origem(tickets_ant, tickets_atu)
-                tmp_atu_path.unlink()
             
             # Comparativo
             st.subheader("📊 Comparativo")
