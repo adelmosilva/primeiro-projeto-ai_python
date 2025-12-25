@@ -145,7 +145,9 @@ try:
                 title="Tickets por Status",
                 color_discrete_sequence=px.colors.sequential.Blues
             )
-            fig.update_layout(height=1000)
+            fig.update_traces(textposition='inside', textinfo='label+percent', 
+                            textfont=dict(size=14))
+            fig.update_layout(height=500, showlegend=False)
             st.plotly_chart(fig, use_container_width=True)
         
         st.markdown("---")
