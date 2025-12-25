@@ -41,14 +41,12 @@ try:
         st.subheader("Resumo Geral")
         resumo = servico.obter_resumo()
         
-        col1, col2, col3, col4 = st.columns(4)
+        col1, col2, col3 = st.columns(3)
         with col1:
             st.metric("Total", resumo['total'])
         with col2:
             st.metric("Abertos", resumo['abertos'])
         with col3:
-            st.metric("Em Progresso", resumo['em_progresso'])
-        with col4:
             st.metric("Fechados", resumo['fechados'])
         
         st.markdown("---")

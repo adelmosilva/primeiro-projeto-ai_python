@@ -121,14 +121,12 @@ try:
         
         resumo = servico.obter_resumo()
         
-        col1, col2, col3, col4 = st.columns(4)
+        col1, col2, col3 = st.columns(3)
         with col1:
             st.metric("📌 Total", formatar_numero(resumo['total']))
         with col2:
             st.metric("✅ Abertos", formatar_numero(resumo['abertos']))
         with col3:
-            st.metric("🔄 Em Progresso", formatar_numero(resumo['em_progresso']))
-        with col4:
             st.metric("✔️ Fechados", formatar_numero(resumo['fechados']))
         
         st.markdown("---")
