@@ -61,20 +61,56 @@ with st.sidebar:
     
     modo = st.radio(
         "Modo de visualização:",
-        ["📊 Dashboard Geral", "📅 Período Específico", "📈 Comparativo"]
+        ["📊 Dashboard Geral", "📅 Período Específico", "📈 Comparativo de Meses"]
     )
     
+    # Inicializar variáveis
+    mes, ano = None, None
+    mes1, ano1, mes2, ano2 = None, None, None, None
+    
     # Opções de período
-    if modo in ["📅 Período Específico", "📈 Comparativo"]:
-        mes = st.selectbox(
-            "Mês",
-            list(range(1, 13)),
-            format_func=lambda x: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", 
-                                   "Jul", "Ago", "Set", "Out", "Nov", "Dez"][x-1]
-        )
-        ano = st.number_input("Ano", min_value=2020, max_value=2030, value=2025)
-    else:
-        mes, ano = None, None
+    if modo == "📅 Período Específico":
+        col1, col2 = st.columns(2)
+        with col1:
+            mes = st.selectbox(
+                "Mês",
+                list(range(1, 13)),
+                format_func=lambda x: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", 
+                                       "Jul", "Ago", "Set", "Out", "Nov", "Dez"][x-1],
+                key="mes_especifico"
+            )
+        with col2:
+            ano = st.number_input("Ano", min_value=2020, max_value=2030, value=2025, key="ano_especifico")
+    
+    elif modo == "📈 Comparativo de Meses":
+        st.subheader("Mês 1 (Esquerda)")
+        col1, col2 = st.columns(2)
+        with col1:
+            mes1 = st.selectbox(
+                "Mês",
+                list(range(1, 13)),
+                format_func=lambda x: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", 
+                                       "Jul", "Ago", "Set", "Out", "Nov", "Dez"][x-1],
+                key="mes1"
+            )
+        with col2:
+            ano1 = st.number_input("Ano", min_value=2020, max_value=2030, value=2025, key="ano1")
+        
+        st.divider()
+        
+        st.subheader("Mês 2 (Direita)")
+        col3, col4 = st.columns(2)
+        with col3:
+            mes2 = st.selectbox(
+                "Mês",
+                list(range(1, 13)),
+                format_func=lambda x: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", 
+                                       "Jul", "Ago", "Set", "Out", "Nov", "Dez"][x-1],
+                key="mes2",
+                index=1
+            )
+        with col4:
+            ano2 = st.number_input("Ano", min_value=2020, max_value=2030, value=2025, key="ano2")
     
     # Info de conexão
     st.markdown("---")
@@ -354,6 +390,191 @@ elif modo == "📈 Comparativo":
                 ax2.pie(df_t_per["Total"], labels=df_t_per["Tipo"], autopct="%1.1f%%")
                 st.pyplot(fig2)
         
+    except Exception as e:
+        st.error(f"❌ Erro: {e}")
+
+# MODE 4: Comparativo de Meses
+elif modo == "📈 Comparativo de Meses":
+    st.header("Comparativo Entre Dois Meses")
+    
+    mes_nome1 = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"][mes1-1]
+    mes_nome2 = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"][mes2-1]
+    
+    try:
+        with st.spinner(f"Carregando {mes_nome1}/{ano1} e {mes_nome2}/{ano2}..."):
+            servico = obter_servico_cache()
+            
+            # Obter dados dos dois meses
+            resumo1 = servico.obter_resumo(mes1, ano1)
+            resumo2 = servico.obter_resumo(mes2, ano2)
+            
+            # Métricas principais lado a lado
+            st.subheader("📊 Resumo Geral")
+            col1, col2, col3 = st.columns([1, 0.1, 1])
+            
+            with col1:
+                st.markdown(f"### 📅 {mes_nome1}/{ano1}")
+                c1, c2, c3, c4 = st.columns(4)
+                with c1:
+                    st.metric("Total", formatar_numero(resumo1['total']))
+                with c2:
+                    st.metric("Abertos", formatar_numero(resumo1['abertos']))
+                with c3:
+                    st.metric("Fechados", formatar_numero(resumo1['fechados']))
+                with c4:
+                    taxa1 = (resumo1['fechados'] / max(1, resumo1['total'])) * 100
+                    st.metric("Taxa", f"{taxa1:.1f}%")
+            
+            with col2:
+                st.write("")
+            
+            with col3:
+                st.markdown(f"### 📅 {mes_nome2}/{ano2}")
+                c5, c6, c7, c8 = st.columns(4)
+                with c5:
+                    st.metric("Total", formatar_numero(resumo2['total']))
+                with c6:
+                    st.metric("Abertos", formatar_numero(resumo2['abertos']))
+                with c7:
+                    st.metric("Fechados", formatar_numero(resumo2['fechados']))
+                with c8:
+                    taxa2 = (resumo2['fechados'] / max(1, resumo2['total'])) * 100
+                    st.metric("Taxa", f"{taxa2:.1f}%")
+            
+            st.markdown("---")
+            
+            # Variações
+            st.subheader("📈 Variações")
+            col1, col2, col3 = st.columns([1, 0.1, 1])
+            
+            with col1:
+                delta_total = resumo2['total'] - resumo1['total']
+                delta_abertos = resumo2['abertos'] - resumo1['abertos']
+                delta_fechados = resumo2['fechados'] - resumo1['fechados']
+                
+                c1, c2, c3 = st.columns(3)
+                with c1:
+                    st.metric("Total", f"{delta_total:+d}", delta=delta_total)
+                with c2:
+                    st.metric("Abertos", f"{delta_abertos:+d}", delta=delta_abertos)
+                with c3:
+                    st.metric("Fechados", f"{delta_fechados:+d}", delta=delta_fechados)
+            
+            with col2:
+                st.write("")
+            
+            with col3:
+                pct_variacao = ((resumo2['total'] - resumo1['total']) / max(1, resumo1['total'])) * 100
+                st.markdown(f"**Variação Total: {pct_variacao:+.1f}%**")
+                
+                if pct_variacao > 0:
+                    st.info(f"📈 {mes_nome2}/{ano2} teve {pct_variacao:.1f}% mais tickets")
+                elif pct_variacao < 0:
+                    st.warning(f"📉 {mes_nome2}/{ano2} teve {abs(pct_variacao):.1f}% menos tickets")
+                else:
+                    st.success(f"➡️ Mesma quantidade de tickets")
+            
+            st.markdown("---")
+            
+            # Top Módulos lado a lado
+            st.subheader("📦 Top Módulos/Componentes")
+            col1, col2, col3 = st.columns([1, 0.05, 1])
+            
+            with col1:
+                st.markdown(f"#### {mes_nome1}/{ano1}")
+                top_modulos1 = servico.obter_top_modulos(mes1, ano1)
+                if top_modulos1:
+                    df_mod1 = pd.DataFrame(top_modulos1, columns=["Componente", "Total"])
+                    st.dataframe(df_mod1, use_container_width=True, hide_index=True)
+                    
+                    fig1, ax1 = plt.subplots(figsize=(5, 4))
+                    ax1.barh(df_mod1["Componente"], df_mod1["Total"], color='#667eea')
+                    ax1.set_xlabel("Quantidade")
+                    ax1.invert_yaxis()
+                    st.pyplot(fig1)
+            
+            with col2:
+                st.write("")
+            
+            with col3:
+                st.markdown(f"#### {mes_nome2}/{ano2}")
+                top_modulos2 = servico.obter_top_modulos(mes2, ano2)
+                if top_modulos2:
+                    df_mod2 = pd.DataFrame(top_modulos2, columns=["Componente", "Total"])
+                    st.dataframe(df_mod2, use_container_width=True, hide_index=True)
+                    
+                    fig2, ax2 = plt.subplots(figsize=(5, 4))
+                    ax2.barh(df_mod2["Componente"], df_mod2["Total"], color='#764ba2')
+                    ax2.set_xlabel("Quantidade")
+                    ax2.invert_yaxis()
+                    st.pyplot(fig2)
+            
+            st.markdown("---")
+            
+            # Top Servidores lado a lado
+            st.subheader("🖥️ Top Servidores/Clusters")
+            col1, col2, col3 = st.columns([1, 0.05, 1])
+            
+            with col1:
+                st.markdown(f"#### {mes_nome1}/{ano1}")
+                top_serv1 = servico.obter_top_servidores(mes1, ano1)
+                if top_serv1:
+                    df_serv1 = pd.DataFrame(top_serv1, columns=["Servidor", "Total"])
+                    st.dataframe(df_serv1, use_container_width=True, hide_index=True)
+                    
+                    fig3, ax3 = plt.subplots(figsize=(5, 4))
+                    ax3.barh(df_serv1["Servidor"], df_serv1["Total"], color='#667eea')
+                    ax3.set_xlabel("Quantidade")
+                    ax3.invert_yaxis()
+                    st.pyplot(fig3)
+            
+            with col2:
+                st.write("")
+            
+            with col3:
+                st.markdown(f"#### {mes_nome2}/{ano2}")
+                top_serv2 = servico.obter_top_servidores(mes2, ano2)
+                if top_serv2:
+                    df_serv2 = pd.DataFrame(top_serv2, columns=["Servidor", "Total"])
+                    st.dataframe(df_serv2, use_container_width=True, hide_index=True)
+                    
+                    fig4, ax4 = plt.subplots(figsize=(5, 4))
+                    ax4.barh(df_serv2["Servidor"], df_serv2["Total"], color='#764ba2')
+                    ax4.set_xlabel("Quantidade")
+                    ax4.invert_yaxis()
+                    st.pyplot(fig4)
+            
+            st.markdown("---")
+            
+            # Tipologia lado a lado
+            st.subheader("📋 Tipologia (Tipo de Item)")
+            col1, col2, col3 = st.columns([1, 0.05, 1])
+            
+            with col1:
+                st.markdown(f"#### {mes_nome1}/{ano1}")
+                tipologia1 = servico.obter_tipologia(mes1, ano1)
+                if tipologia1:
+                    df_tip1 = pd.DataFrame(tipologia1, columns=["Tipo", "Total"])
+                    st.dataframe(df_tip1, use_container_width=True, hide_index=True)
+                    
+                    fig5, ax5 = plt.subplots(figsize=(5, 4))
+                    ax5.pie(df_tip1["Total"], labels=df_tip1["Tipo"], autopct="%1.1f%%")
+                    st.pyplot(fig5)
+            
+            with col2:
+                st.write("")
+            
+            with col3:
+                st.markdown(f"#### {mes_nome2}/{ano2}")
+                tipologia2 = servico.obter_tipologia(mes2, ano2)
+                if tipologia2:
+                    df_tip2 = pd.DataFrame(tipologia2, columns=["Tipo", "Total"])
+                    st.dataframe(df_tip2, use_container_width=True, hide_index=True)
+                    
+                    fig6, ax6 = plt.subplots(figsize=(5, 4))
+                    ax6.pie(df_tip2["Total"], labels=df_tip2["Tipo"], autopct="%1.1f%%")
+                    st.pyplot(fig6)
+    
     except Exception as e:
         st.error(f"❌ Erro: {e}")
 
