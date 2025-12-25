@@ -355,8 +355,7 @@ elif opcao == "📊 Comparativo de Períodos":
                 
                 # Período Atual
                 if top_10_servidores_atual:
-                    total_abertos_atual = resumo_atu['total_abertos']
-                    st.markdown(f"#### 📊 Período Atual (Total: {total_abertos_atual} tickets)")
+                    st.markdown("#### 📊 Período Atual")
                     df_top10_atual = pd.DataFrame(
                         top_10_servidores_atual,
                         columns=["Servidor/Cluster", "Tickets Abertos"]
@@ -364,8 +363,7 @@ elif opcao == "📊 Comparativo de Períodos":
                     
                     # Calcular soma dos demais servidores
                     top10_sum = df_top10_atual["Tickets Abertos"].sum()
-                    
-                    # Calcular total de tickets abertos de forma mais confiável
+                    total_abertos_atual = resumo_atu['total_abertos']
                     demais_sum = max(0, total_abertos_atual - top10_sum)
                     
                     # Adicionar linha "Demais servidores"
@@ -374,8 +372,15 @@ elif opcao == "📊 Comparativo de Períodos":
                         "Tickets Abertos": [demais_sum]
                     })
                     df_top10_atual = pd.concat([df_top10_atual, df_demais], ignore_index=True)
+                    
+                    # Calcular total geral da tabela
+                    total_modulos_atual = df_top10_atual["Tickets Abertos"].sum()
+                    
                     df_top10_atual.index = df_top10_atual.index + 1
                     df_top10_atual.index.name = "Posição"
+                    
+                    # Exibir título com total
+                    st.markdown(f"**Total de Tickets por Módulo: {total_modulos_atual}**")
                     
                     # Exibir tabela com destaque
                     st.dataframe(
@@ -390,8 +395,7 @@ elif opcao == "📊 Comparativo de Períodos":
                 
                 # Acumulado
                 if top_10_servidores_acumulado:
-                    total_abertos_acum = resumo_acumulado['total_abertos']
-                    st.markdown(f"#### 📈 Acumulado (Ambos os Períodos) (Total: {total_abertos_acum} tickets)")
+                    st.markdown("#### 📈 Acumulado (Ambos os Períodos)")
                     df_top10_acumulado = pd.DataFrame(
                         top_10_servidores_acumulado,
                         columns=["Servidor/Cluster", "Tickets Abertos"]
@@ -399,6 +403,7 @@ elif opcao == "📊 Comparativo de Períodos":
                     
                     # Calcular soma dos demais servidores
                     top10_sum_acum = df_top10_acumulado["Tickets Abertos"].sum()
+                    total_abertos_acum = resumo_acumulado['total_abertos']
                     demais_sum_acum = max(0, total_abertos_acum - top10_sum_acum)
                     
                     # Adicionar linha "Demais servidores"
@@ -407,8 +412,15 @@ elif opcao == "📊 Comparativo de Períodos":
                         "Tickets Abertos": [demais_sum_acum]
                     })
                     df_top10_acumulado = pd.concat([df_top10_acumulado, df_demais_acum], ignore_index=True)
+                    
+                    # Calcular total geral da tabela
+                    total_modulos_acum = df_top10_acumulado["Tickets Abertos"].sum()
+                    
                     df_top10_acumulado.index = df_top10_acumulado.index + 1
                     df_top10_acumulado.index.name = "Posição"
+                    
+                    # Exibir título com total
+                    st.markdown(f"**Total de Tickets por Módulo: {total_modulos_acum}**")
                     
                     # Exibir tabela com destaque
                     st.dataframe(
