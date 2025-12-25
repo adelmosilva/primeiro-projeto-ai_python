@@ -1,5 +1,5 @@
 """
-Página 1: Dashboard com Banco de Dados - Carregamento Automático
+Página 1: Dashboard com Banco de Dados PostgreSQL
 """
 
 import streamlit as st
@@ -7,14 +7,43 @@ from pathlib import Path
 import sys
 
 # Configurar página
-st.set_page_config(page_title="Dashboard DB", page_icon="📊", layout="wide")
+st.set_page_config(
+    page_title="Dashboard DB",
+    page_icon="📊",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
 
-# Adicionar pages ao path para importar o loader
-PAGES_DIR = Path(__file__).parent
-sys.path.insert(0, str(PAGES_DIR))
+# Configurar paths
+PROJECT_ROOT = Path(__file__).parent.parent
+sys.path.insert(0, str(PROJECT_ROOT))
+sys.path.insert(0, str(PROJECT_ROOT / "backend"))
 
-# Importar e usar o loader
-from _dashboard_loader import load_dashboard
-
-# Carregar o dashboard
-load_dashboard("dashboard_db.py")
+try:
+    # Importar direto os módulos necessários
+    from backend.servico_tickets import obter_servico
+    from app.services.analysis_service import AnalysisService
+    from app.config import REPORTS_OUTPUT_DIR
+    import pandas as pd
+    import matplotlib.pyplot as plt
+    from datetime import datetime
+    
+    # Agora carregar o dashboard
+    exec(open(PROJECT_ROOT / "backend" / "dashboard_db.py").read())
+    
+except ImportError as e:
+    st.error(f"❌ Erro ao importar módulo: {e}")
+    st.info("Verifique se todos os arquivos estão no lugar correto:")
+    st.code(f"""
+backend/
+  ├── servico_tickets.py
+  ├── dashboard_db.py
+  └── app/
+      ├── services/
+      │   └── analysis_service.py
+      └── config.py
+    """)
+except Exception as e:
+    st.error(f"❌ Erro ao carregar dashboard: {e}")
+    import traceback
+    st.code(traceback.format_exc())
