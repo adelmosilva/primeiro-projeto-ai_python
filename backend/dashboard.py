@@ -356,35 +356,45 @@ elif opcao == "📊 Comparativo de Períodos":
             if top_10_servidores_atual or top_10_servidores_acumulado:
                 st.subheader("🏢 Top 10 Servidores/Clusters com Mais Tickets Abertos")
                 
-                col1, col2 = st.columns(2)
+                # Período Atual
+                if top_10_servidores_atual:
+                    st.markdown("#### 📊 Período Atual")
+                    df_top10_atual = pd.DataFrame(
+                        top_10_servidores_atual,
+                        columns=["Servidor/Cluster", "Tickets Abertos"]
+                    )
+                    df_top10_atual.index = df_top10_atual.index + 1
+                    df_top10_atual.index.name = "Posição"
+                    
+                    # Exibir tabela com destaque
+                    st.dataframe(
+                        df_top10_atual,
+                        use_container_width=True,
+                        height=300
+                    )
+                else:
+                    st.info("ℹ️ Nenhum servidor com tickets abertos no período atual")
                 
-                with col1:
-                    if top_10_servidores_atual:
-                        st.write("**Período Atual**")
-                        df_top10_atual = pd.DataFrame(
-                            top_10_servidores_atual,
-                            columns=["Servidor/Cluster", "Tickets Abertos"]
-                        )
-                        st.bar_chart(
-                            data=df_top10_atual.set_index("Servidor/Cluster"),
-                            use_container_width=True,
-                            height=400
-                        )
-                        st.dataframe(df_top10_atual, use_container_width=True, hide_index=True)
+                st.divider()
                 
-                with col2:
-                    if top_10_servidores_acumulado:
-                        st.write("**Acumulado (Ambos os Períodos)**")
-                        df_top10_acumulado = pd.DataFrame(
-                            top_10_servidores_acumulado,
-                            columns=["Servidor/Cluster", "Tickets Abertos"]
-                        )
-                        st.bar_chart(
-                            data=df_top10_acumulado.set_index("Servidor/Cluster"),
-                            use_container_width=True,
-                            height=400
-                        )
-                        st.dataframe(df_top10_acumulado, use_container_width=True, hide_index=True)
+                # Acumulado
+                if top_10_servidores_acumulado:
+                    st.markdown("#### 📈 Acumulado (Ambos os Períodos)")
+                    df_top10_acumulado = pd.DataFrame(
+                        top_10_servidores_acumulado,
+                        columns=["Servidor/Cluster", "Tickets Abertos"]
+                    )
+                    df_top10_acumulado.index = df_top10_acumulado.index + 1
+                    df_top10_acumulado.index.name = "Posição"
+                    
+                    # Exibir tabela com destaque
+                    st.dataframe(
+                        df_top10_acumulado,
+                        use_container_width=True,
+                        height=300
+                    )
+                else:
+                    st.info("ℹ️ Nenhum servidor com tickets abertos no acumulado")
                 
                 st.markdown("---")
             
