@@ -1,5 +1,6 @@
 """
-Página 1B: Dashboard com Plotly (Versão Interativa com Gráficos)
+Página 1: Dashboard - Visão Geral - Todos os Tickets
+Visualizações interativas com Plotly
 """
 
 # ⚠️ IMPORTAR PRIMEIRO - FORÇA IPv4 GLOBALMENTE
@@ -11,7 +12,7 @@ import sys
 
 # Configurar página
 st.set_page_config(
-    page_title="Dashboard Plotly",
+    page_title="Visão Geral - Todos os Tickets",
     page_icon="📊",
     layout="wide",
     initial_sidebar_state="expanded"

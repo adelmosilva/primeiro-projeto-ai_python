@@ -1,6 +1,6 @@
 """
-Página 4B: Ver Dados do Banco com Plotly
-Versão interativa com Plotly em vez de Streamlit charts
+Página 4: Resumo Geral - Ver Dados do Banco
+Versão interativa com Plotly
 """
 
 # ⚠️ IMPORTAR PRIMEIRO - FORÇA IPv4 GLOBALMENTE
@@ -13,7 +13,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 from pathlib import Path
 
-st.set_page_config(page_title="Dados Banco (Plotly)", page_icon="👀", layout="wide")
+st.set_page_config(page_title="Resumo Geral", page_icon="👀", layout="wide")
 
 # Configurar paths e tema
 PROJECT_ROOT = Path(__file__).parent.parent
@@ -24,8 +24,8 @@ from backend.theme_manager import configurar_tema_completo
 from backend.footer_helper import exibir_rodape
 configurar_tema_completo()
 
-st.title("👀 Dados do Banco de Dados (Plotly)")
-st.markdown("Preview com visualizações interativas via Plotly")
+st.title("👀 Resumo Geral")
+st.markdown("Visualizações interativas do banco de dados com Plotly")
 st.markdown("---")
 
 try:

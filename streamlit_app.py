@@ -1,5 +1,5 @@
 """
-AGT 4.0 - App Principal do Streamlit Cloud
+Home - Página principal do Streamlit Cloud
 """
 
 # ⚠️ IMPORTAR PRIMEIRO - FORÇA IPv4 GLOBALMENTE
@@ -19,8 +19,8 @@ from backend.theme_manager import configurar_tema_completo
 from backend.version import get_version
 
 st.set_page_config(
-    page_title="AGT 4.0 - Sistema de Análise de Tickets",
-    page_icon="📊",
+    page_title="Home",
+    page_icon="🏠",
     layout="wide",
     initial_sidebar_state="expanded"
 )
