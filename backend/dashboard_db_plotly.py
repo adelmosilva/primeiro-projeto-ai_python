@@ -173,10 +173,11 @@ try:
         modulos = servico.obter_top_modulos()
         if modulos:
             df_modulos = pd.DataFrame(modulos[:10], columns=['modulo', 'quantidade']).sort_values('quantidade')
-            fig = px.barh(
+            fig = px.bar(
                 df_modulos,
                 x='quantidade',
                 y='modulo',
+                orientation='h',
                 title="Módulos com Mais Tickets",
                 color='quantidade',
                 color_continuous_scale="Viridis"
@@ -191,10 +192,11 @@ try:
         servidores = servico.obter_top_servidores()
         if servidores:
             df_servidores = pd.DataFrame(servidores[:10], columns=['servidor', 'quantidade']).sort_values('quantidade')
-            fig = px.barh(
+            fig = px.bar(
                 df_servidores,
                 x='quantidade',
                 y='servidor',
+                orientation='h',
                 title="Servidores com Mais Tickets",
                 color='quantidade',
                 color_continuous_scale="Blues"

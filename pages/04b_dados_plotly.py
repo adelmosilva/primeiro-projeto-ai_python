@@ -73,10 +73,11 @@ try:
         if modulos:
             df_modulos = pd.DataFrame(modulos[:20], columns=['modulo', 'quantidade']).sort_values('quantidade')
             
-            fig = px.barh(
+            fig = px.bar(
                 df_modulos,
                 x='quantidade',
                 y='modulo',
+                orientation='h',
                 title="Módulos mais acionados",
                 color='quantidade',
                 color_continuous_scale="Viridis",
@@ -103,10 +104,11 @@ try:
         if servidores:
             df_servidores = pd.DataFrame(servidores[:20], columns=['servidor', 'quantidade']).sort_values('quantidade')
             
-            fig = px.barh(
+            fig = px.bar(
                 df_servidores,
                 x='quantidade',
                 y='servidor',
+                orientation='h',
                 title="Servidores mais acionados",
                 color='quantidade',
                 color_continuous_scale="Blues",
