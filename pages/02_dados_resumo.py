@@ -51,21 +51,30 @@ try:
         
         st.markdown("---")
         
-        # Gráfico de Tipologia
-        st.subheader("Status Distribution")
+        # Gráfico de Status com mais detalhes
+        st.subheader("📊 Distribuição de Status")
         tipologia = servico.obter_tipologia()
         if tipologia:
             df_tipo = pd.DataFrame(tipologia, columns=['status', 'quantidade'])
-            fig = px.pie(
-                df_tipo,
-                values='quantidade',
-                names='status',
-                title="Distribuição de Status",
-                color_discrete_sequence=px.colors.sequential.Blues
+            # Gráfico de barras horizontal com mais informações
+            fig = px.bar(
+                df_tipo.sort_values('quantidade', ascending=True),
+                x='quantidade',
+                y='status',
+                orientation='h',
+                title="Distribuição por Tipologia",
+                color='quantidade',
+                color_continuous_scale="Blues",
+                text='quantidade',
+                hover_data={'quantidade': True, 'status': True}
             )
-            fig.update_traces(textposition='outside', textinfo='label+percent',
-                            textfont=dict(size=14, weight='bold'))
-            fig.update_layout(height=750, showlegend=False)
+            fig.update_traces(textposition='outside')
+            fig.update_layout(
+                height=450,
+                showlegend=False,
+                xaxis_title="Quantidade de Tickets",
+                yaxis_title="Tipo/Status"
+            )
             st.plotly_chart(fig, use_container_width=True)
     
     with tab2:
@@ -133,39 +142,20 @@ try:
     with tab4:
         st.subheader("📋 Tipologia de Tickets")
         
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            st.subheader("Por Tipologia/Status")
-            tipologia = servico.obter_tipologia()
-            if tipologia:
-                df_tipo = pd.DataFrame(tipologia, columns=['status', 'quantidade'])
-                fig = px.bar(
-                    df_tipo,
-                    x='status',
-                    y='quantidade',
-                    title="Tickets por Status",
-                    color='status',
-                    color_discrete_sequence=px.colors.sequential.Blues
-                )
-                fig.update_layout(height=400, showlegend=False)
-                st.plotly_chart(fig, use_container_width=True)
-        
-        with col2:
-            st.subheader("Por Origem")
-            origem = servico.obter_origem()
-            if origem:
-                df_origem = pd.DataFrame(origem, columns=['origem', 'quantidade'])
-                fig = px.bar(
-                    df_origem,
-                    x='origem',
-                    y='quantidade',
-                    title="Tickets por Origem",
-                    color='origem',
-                    color_discrete_sequence=px.colors.sequential.Blues_r
-                )
-                fig.update_layout(height=400, showlegend=False)
-                st.plotly_chart(fig, use_container_width=True)
+        st.subheader("Por Origem")
+        origem = servico.obter_origem()
+        if origem:
+            df_origem = pd.DataFrame(origem, columns=['origem', 'quantidade'])
+            fig = px.bar(
+                df_origem,
+                x='origem',
+                y='quantidade',
+                title="Tickets por Origem",
+                color='origem',
+                color_discrete_sequence=px.colors.sequential.Blues_r
+            )
+            fig.update_layout(height=400, showlegend=False)
+            st.plotly_chart(fig, use_container_width=True)
 
 except Exception as e:
     st.error(f"❌ Erro: {e}")
